@@ -1,4 +1,8 @@
 # Suspicious Login Investigation Procedure
+Priority: High (P2)
+
+Reason:
+Potential account compromise involving authentication anomalies, possible credential exposure, and elevated business risk if unauthorized access is successful.
 
 ## Objective
 
