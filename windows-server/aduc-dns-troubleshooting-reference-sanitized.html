@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ADUC Not Opening & DNS Cleanup - Windows Server 2019</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-soft: #1f2937;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.16);
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --border: rgba(148, 163, 184, 0.25);
+      --code-bg: #020617;
+      --shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, 0.12), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.09), transparent 30%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    .page {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 48px 22px 80px;
+    }
+
+    header {
+      padding: 36px;
+      background: linear-gradient(135deg, rgba(17, 24, 39, 0.96), rgba(30, 41, 59, 0.92));
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      inset: auto -80px -120px auto;
+      width: 300px;
+      height: 300px;
+      background: var(--accent-soft);
+      border-radius: 999px;
+      filter: blur(8px);
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.78rem;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: 1.05;
+      margin: 0 0 18px;
+      max-width: 900px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 1.08rem;
+      max-width: 850px;
+      margin: 0;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 28px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .meta-card {
+      background: rgba(15, 23, 42, 0.72);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .meta-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .meta-card strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 0.98rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 270px 1fr;
+      gap: 24px;
+      margin-top: 28px;
+    }
+
+    nav {
+      position: sticky;
+      top: 18px;
+      align-self: start;
+      background: rgba(17, 24, 39, 0.86);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    nav h2 {
+      margin: 0 0 14px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    nav a {
+      display: block;
+      color: var(--text);
+      text-decoration: none;
+      padding: 9px 10px;
+      border-radius: 12px;
+      font-size: 0.94rem;
+    }
+
+    nav a:hover {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    main {
+      display: grid;
+      gap: 22px;
+    }
+
+    section {
+      background: rgba(17, 24, 39, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    h2 {
+      margin: 0 0 18px;
+      font-size: 1.55rem;
+      line-height: 1.2;
+    }
+
+    h3 {
+      margin: 22px 0 10px;
+      font-size: 1.05rem;
+      color: #f8fafc;
+    }
+
+    p {
+      margin: 0 0 14px;
+      color: #d1d5db;
+    }
+
+    ul, ol {
+      padding-left: 22px;
+      margin-top: 8px;
+      margin-bottom: 12px;
+      color: #d1d5db;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    .callout {
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      background: rgba(15, 23, 42, 0.8);
+      border-radius: 16px;
+      padding: 16px 18px;
+      margin: 16px 0;
+    }
+
+    .success {
+      border-left-color: var(--success);
+    }
+
+    .warning {
+      border-left-color: var(--warning);
+    }
+
+    .danger {
+      border-left-color: var(--danger);
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .badge {
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.88);
+      color: var(--text);
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 0.83rem;
+    }
+
+    .badge.good {
+      color: #86efac;
+      border-color: rgba(34, 197, 94, 0.35);
+      background: rgba(34, 197, 94, 0.1);
+    }
+
+    .badge.warn {
+      color: #fcd34d;
+      border-color: rgba(245, 158, 11, 0.35);
+      background: rgba(245, 158, 11, 0.1);
+    }
+
+    code {
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      color: #bae6fd;
+    }
+
+    pre {
+      background: var(--code-bg);
+      color: #e2e8f0;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 16px;
+      padding: 16px 18px;
+      overflow-x: auto;
+      margin: 12px 0 18px;
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+
+    pre code {
+      color: inherit;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .mini-card {
+      background: rgba(31, 41, 55, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .mini-card h3 {
+      margin-top: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+      overflow: hidden;
+      border-radius: 16px;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 12px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--accent);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: rgba(15, 23, 42, 0.65);
+    }
+
+    td {
+      color: #d1d5db;
+    }
+
+    .timeline {
+      counter-reset: step;
+      display: grid;
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding: 18px 18px 18px 58px;
+      background: rgba(31, 41, 55, 0.48);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+    }
+
+    .timeline-item::before {
+      counter-increment: step;
+      content: counter(step);
+      position: absolute;
+      left: 18px;
+      top: 18px;
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    .timeline-item h3 {
+      margin-top: 0;
+      margin-bottom: 6px;
+    }
+
+    footer {
+      color: var(--muted);
+      text-align: center;
+      padding: 26px 0 0;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      nav {
+        position: static;
+      }
+
+      .meta-grid,
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+
+      header,
+      section {
+        padding: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="eyebrow">Windows Server 2019 • Active Directory • DNS</div>
+      <h1>ADUC Not Opening & DNS Cleanup Troubleshooting Report</h1>
+      <p class="subtitle">
+        A documented troubleshooting event for Active Directory Users and Computers failing to open, followed by DNS cleanup of duplicate Domain Controller records and reverse lookup configuration. All hostnames, domains, and IP addresses have been sanitized for public portfolio use.
+      </p>
+
+      <div class="meta-grid">
+        <div class="meta-card">
+          <span>Server</span>
+          <strong>DC01</strong>
+        </div>
+        <div class="meta-card">
+          <span>Domain</span>
+          <strong>example.local</strong>
+        </div>
+        <div class="meta-card">
+          <span>Role</span>
+          <strong>Domain Controller</strong>
+        </div>
+        <div class="meta-card">
+          <span>Primary IP</span>
+          <strong>10.10.10.10</strong>
+        </div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <nav aria-label="Page navigation">
+        <h2>Contents</h2>
+        <a href="#summary">Issue Summary</a>
+        <a href="#environment">Environment</a>
+        <a href="#aduc">ADUC Troubleshooting</a>
+        <a href="#dns">DNS Investigation</a>
+        <a href="#resolution">Resolution</a>
+        <a href="#commands">Command Reference</a>
+        <a href="#lessons">Lessons Learned</a>
+      </nav>
+
+      <main>
+        <section id="summary">
+          <h2>Issue Summary</h2>
+          <p>
+            Active Directory Users and Computers, launched using <code>dsa.msc</code>, failed to open on the Windows Server Domain Controller.
+            The command produced no visible error, no popup, and no application window.
+          </p>
+
+          <div class="badge-row">
+            <span class="badge warn">Silent MMC failure</span>
+            <span class="badge good">AD DS healthy</span>
+            <span class="badge good">Netlogon running</span>
+            <span class="badge warn">Duplicate DNS records found</span>
+          </div>
+
+          <div class="callout warning">
+            <strong>Important observation:</strong> The issue initially appeared to be an Active Directory console problem, but additional DNS validation revealed stale Domain Controller records and missing reverse lookup behavior.
+          </div>
+        </section>
+
+        <section id="environment">
+          <h2>Environment</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Operating System</td>
+                <td>Windows Server 2019</td>
+              </tr>
+              <tr>
+                <td>Server Name</td>
+                <td><code>DC01</code></td>
+              </tr>
+              <tr>
+                <td>Domain</td>
+                <td><code>example.local</code></td>
+              </tr>
+              <tr>
+                <td>Role</td>
+                <td>Domain Controller / DNS Server</td>
+              </tr>
+              <tr>
+                <td>Confirmed Valid IP</td>
+                <td><code>10.10.10.10</code></td>
+              </tr>
+              <tr>
+                <td>Stale IP Removed</td>
+                <td><code>10.10.10.66</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="aduc">
+          <h2>ADUC Troubleshooting Workflow</h2>
+
+          <div class="timeline">
+            <div class="timeline-item">
+              <h3>Verified RSAT and AD DS Tools</h3>
+              <p>Confirmed that the required Active Directory management tools were installed.</p>
+              <pre><code>Get-WindowsFeature RSAT-AD-Tools
+Get-WindowsFeature RSAT-ADDS</code></pre>
+            </div>
+
+            <div class="timeline-item">
+              <h3>Verified Active Directory Services</h3>
+              <p>Confirmed that core Domain Controller services were running.</p>
+              <pre><code>Get-Service NTDS
+Get-Service Netlogon</code></pre>
+            </div>
+
+            <div class="timeline-item">
+              <h3>Ran Domain Controller Diagnostics</h3>
+              <p>The server passed connectivity and service checks.</p>
+              <pre><code>dcdiag /test:services</code></pre>
+            </div>
+
+            <div class="timeline-item">
+              <h3>Tested ADUC Launch</h3>
+              <p><code>dsa.msc</code> produced no response, indicating a likely MMC or snap-in issue rather than a service outage.</p>
+              <pre><code>dsa.msc</code></pre>
+            </div>
+
+            <div class="timeline-item">
+              <h3>Validated MMC Functionality</h3>
+              <p>A blank MMC console opened successfully, and other snap-ins also opened successfully.</p>
+              <pre><code>mmc.exe
+eventvwr.msc
+services.msc</code></pre>
+            </div>
+
+            <div class="timeline-item">
+              <h3>Cleared MMC Cache</h3>
+              <p>Clearing the cached MMC profile resolved the ADUC launch issue.</p>
+              <pre><code>del /q "%appdata%\Microsoft\MMC\*"</code></pre>
+            </div>
+
+            <div class="timeline-item">
+              <h3>Ran System Repair Checks</h3>
+              <p>SFC and DISM confirmed that no operating system corruption was causing the issue.</p>
+              <pre><code>sfc /scannow
+DISM /Online /Cleanup-Image /RestoreHealth</code></pre>
+            </div>
+          </div>
+
+          <div class="callout success">
+            <strong>ADUC Resolution:</strong> Active Directory Users and Computers opened successfully after clearing the corrupted MMC profile cache.
+          </div>
+        </section>
+
+        <section id="dns">
+          <h2>DNS Investigation & Cleanup</h2>
+          <p>
+            After ADUC was restored, DNS testing showed that the Domain Controller was resolving correctly by hostname, but <code>nslookup</code> still showed the DNS server as <code>UnKnown</code>.
+          </p>
+
+          <h3>Observed DNS Output</h3>
+          <pre><code>nslookup DC01
+
+Server:  UnKnown
+Address:  10.10.10.10
+
+Name:    DC01.example.local
+Addresses:  2001:db8:abcd:100::10
+            2001:db8:abcd:100::20
+            10.10.10.10
+            10.10.10.66</code></pre>
+
+          <div class="two-col">
+            <div class="mini-card">
+              <h3>Finding 1: Duplicate A Records</h3>
+              <p>The Domain Controller had multiple IPv4 A records, including a stale address.</p>
+              <pre><code>DC01 → 10.10.10.10
+DC01 → 10.10.10.66</code></pre>
+            </div>
+
+            <div class="mini-card">
+              <h3>Finding 2: Missing Reverse Lookup</h3>
+              <p>The DNS server appeared as <code>UnKnown</code> because reverse DNS/PTR lookup was not properly configured.</p>
+              <pre><code>Default Server:  UnKnown
+Address:  10.10.10.10</code></pre>
+            </div>
+          </div>
+
+          <h3>Cleanup Performed</h3>
+          <ol>
+            <li>Opened DNS Manager using <code>dnsmgmt.msc</code>.</li>
+            <li>Reviewed the Forward Lookup Zone for <code>example.local</code>.</li>
+            <li>Removed stale A record <code>10.10.10.66</code>.</li>
+            <li>Retained valid DC record <code>10.10.10.10</code>.</li>
+            <li>Created a Reverse Lookup Zone for <code>10.10.10.x</code>.</li>
+            <li>Configured Dynamic Updates as <strong>Secure only</strong>.</li>
+            <li>Flushed and re-registered DNS records.</li>
+            <li>Restarted Netlogon to republish DC locator records.</li>
+          </ol>
+
+          <h3>Reverse Lookup Zone Configuration</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Setting</th>
+                <th>Configuration</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Zone Type</td>
+                <td>Primary Zone</td>
+              </tr>
+              <tr>
+                <td>AD Integrated</td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td>Dynamic Updates</td>
+                <td>Secure only</td>
+              </tr>
+              <tr>
+                <td>Network ID</td>
+                <td><code>10.10.10</code></td>
+              </tr>
+              <tr>
+                <td>Reverse Zone</td>
+                <td><code>10.10.10.in-addr.arpa</code> / example placeholder</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>DNS Re-registration Commands</h3>
+          <pre><code>ipconfig /flushdns
+ipconfig /registerdns
+net stop netlogon
+net start netlogon</code></pre>
+        </section>
+
+        <section id="resolution">
+          <h2>Final Resolution</h2>
+
+          <div class="two-col">
+            <div class="mini-card">
+              <h3>ADUC Issue</h3>
+              <p><strong>Root Cause:</strong> Corrupted MMC cache/profile.</p>
+              <p><strong>Fix:</strong> Cleared cached MMC console files.</p>
+              <pre><code>del /q "%appdata%\Microsoft\MMC\*"</code></pre>
+            </div>
+
+            <div class="mini-card">
+              <h3>DNS Issue</h3>
+              <p><strong>Root Cause:</strong> Duplicate A records and missing PTR/reverse lookup zone.</p>
+              <p><strong>Fix:</strong> Removed stale DNS records and created reverse lookup zone.</p>
+              <pre><code>nslookup 10.10.10.10</code></pre>
+            </div>
+          </div>
+
+          <div class="callout success">
+            <strong>Outcome:</strong> ADUC launched successfully, the stale IP record was removed, reverse lookup was configured, and DNS identity resolution was restored.
+          </div>
+        </section>
+
+        <section id="commands">
+          <h2>Command Reference</h2>
+
+          <h3>Server Identity</h3>
+          <pre><code>hostname
+echo %COMPUTERNAME%
+ipconfig /all</code></pre>
+
+          <h3>Active Directory Health</h3>
+          <pre><code>Get-Service NTDS
+Get-Service Netlogon
+dcdiag /test:services</code></pre>
+
+          <h3>MMC and Snap-ins</h3>
+          <pre><code>mmc.exe
+dsa.msc
+eventvwr.msc
+services.msc
+dnsmgmt.msc</code></pre>
+
+          <h3>MMC Cache Repair</h3>
+          <pre><code>del /q "%appdata%\Microsoft\MMC\*"</code></pre>
+
+          <h3>DNS Validation</h3>
+          <pre><code>nslookup
+nslookup DC01
+nslookup DC01.example.local
+nslookup 10.10.10.10
+nslookup 10.10.10.66</code></pre>
+
+          <h3>DNS Refresh</h3>
+          <pre><code>ipconfig /flushdns
+ipconfig /registerdns
+net stop netlogon
+net start netlogon</code></pre>
+
+          <h3>System Repair</h3>
+          <pre><code>sfc /scannow
+DISM /Online /Cleanup-Image /RestoreHealth</code></pre>
+        </section>
+
+        <section id="lessons">
+          <h2>Lessons Learned</h2>
+
+          <ul>
+            <li>Silent <code>dsa.msc</code> failures can be caused by corrupted MMC user profile cache.</li>
+            <li>Always verify AD DS, Netlogon, and <code>dcdiag</code> before assuming Active Directory is broken.</li>
+            <li>Testing other snap-ins helps isolate whether the issue is MMC-wide or snap-in-specific.</li>
+            <li>Duplicate Domain Controller A records can create inconsistent DNS behavior.</li>
+            <li><code>Server: UnKnown</code> in <code>nslookup</code> usually points to missing or broken reverse lookup/PTR records.</li>
+            <li>AD-integrated DNS zones should use <strong>Secure only</strong> dynamic updates.</li>
+            <li>Restarting Netlogon forces the Domain Controller to republish SRV and locator records.</li>
+          </ul>
+
+          <div class="callout">
+            <strong>Portfolio Note:</strong> This troubleshooting event demonstrates practical Windows Server administration, Active Directory validation, DNS cleanup, reverse lookup configuration, and structured root cause analysis.
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer>
+      Built for lab documentation and GitHub portfolio reference • example.local
+    </footer>
+  </div>
+</body>
+</html>
