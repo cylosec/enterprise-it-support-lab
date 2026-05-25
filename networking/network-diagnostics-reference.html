@@ -459,13 +459,28 @@
           <h3>Domain User Account Status</h3>
           <code class="command">net user username /domain</code>
           <div class="label">Purpose</div>
-          <p>Checks domain account details such as password status, account lockout, group membership, and expiration information.</p>
+          <p>Checks domain account details such as password status, account lockout, group membership, last logon, and expiration information.</p>
           <div class="label">Use When</div>
           <ul>
             <li>A user cannot log in.</li>
             <li>You suspect the account is locked, disabled, or expired.</li>
             <li>You need a fast check without opening Active Directory Users and Computers.</li>
           </ul>
+          <div class="label">Common Parameters & Examples</div>
+          <code class="command">net user username /domain</code>
+          <p>View domain account details, password status, group membership, and account expiration information.</p>
+          <code class="command">net user username newpassword /domain</code>
+          <p>Reset a domain user's password. Use only when authorized and following company identity verification policy.</p>
+          <code class="command">net user username /active:yes /domain</code>
+          <p>Enable a disabled domain user account.</p>
+          <code class="command">net user username /active:no /domain</code>
+          <p>Disable a domain user account during offboarding, compromise response, or access removal workflows.</p>
+          <code class="command">net user username /expires:never /domain</code>
+          <p>Set the account so it does not expire. Use carefully and only when policy allows.</p>
+          <code class="command">net user username /passwordchg:yes /domain</code>
+          <p>Allow the user to change their password.</p>
+          <code class="command">net user username /passwordchg:no /domain</code>
+          <p>Prevent the user from changing their password. This is usually reserved for special-purpose accounts and should follow policy.</p>
         </article>
       </div>
     </section>
