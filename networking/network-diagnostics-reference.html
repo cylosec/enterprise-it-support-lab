@@ -459,12 +459,90 @@
           <h3>Domain User Account Status</h3>
           <code class="command">net user username /domain</code>
           <div class="label">Purpose</div>
-          <p>Checks domain account details such as password status, account lockout, group membership, and expiration information.</p>
+          <p>Checks domain account details such as password status, account lockout, group membership, last logon, and expiration information.</p>
           <div class="label">Use When</div>
           <ul>
             <li>A user cannot log in.</li>
             <li>You suspect the account is locked, disabled, or expired.</li>
             <li>You need a fast check without opening Active Directory Users and Computers.</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3>Reset Domain Password</h3>
+          <code class="command">net user username newpassword /domain</code>
+          <div class="label">Purpose</div>
+          <p>Resets a domain user's password from the command line.</p>
+          <div class="label">Use When</div>
+          <ul>
+            <li>The user completed identity verification.</li>
+            <li>A password reset ticket has documented approval.</li>
+            <li>You need a quick reset without opening ADUC.</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3>Enable Domain Account</h3>
+          <code class="command">net user username /active:yes /domain</code>
+          <div class="label">Purpose</div>
+          <p>Enables a disabled domain user account.</p>
+          <div class="label">Use When</div>
+          <ul>
+            <li>An account was disabled by mistake.</li>
+            <li>A returning user needs access restored.</li>
+            <li>Access restoration has been approved.</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3>Disable Domain Account</h3>
+          <code class="command">net user username /active:no /domain</code>
+          <div class="label">Purpose</div>
+          <p>Disables a domain user account to prevent sign-in.</p>
+          <div class="label">Use When</div>
+          <ul>
+            <li>An employee is being offboarded.</li>
+            <li>An account may be compromised.</li>
+            <li>Temporary access needs to be revoked.</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3>Set Account Expiration</h3>
+          <code class="command">net user username /expires:never /domain</code>
+          <div class="label">Purpose</div>
+          <p>Configures whether a domain account expires.</p>
+          <div class="label">Use When</div>
+          <ul>
+            <li>A service or long-term account should not expire.</li>
+            <li>Policy allows non-expiring accounts.</li>
+            <li>You are documenting account lifecycle settings.</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3>Allow Password Changes</h3>
+          <code class="command">net user username /passwordchg:yes /domain</code>
+          <div class="label">Purpose</div>
+          <p>Allows a domain user to change their password.</p>
+          <div class="label">Use When</div>
+          <ul>
+            <li>A user reports they cannot change their password.</li>
+            <li>You are correcting account restrictions.</li>
+            <li>The account should follow normal password policy.</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3>Block Password Changes</h3>
+          <code class="command">net user username /passwordchg:no /domain</code>
+          <div class="label">Purpose</div>
+          <p>Prevents a domain user from changing their password.</p>
+          <div class="label">Use When</div>
+          <ul>
+            <li>The account is a special-purpose account.</li>
+            <li>Password control is managed by administrators.</li>
+            <li>Security policy requires restricted password changes.</li>
           </ul>
         </article>
       </div>
