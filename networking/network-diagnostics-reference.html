@@ -318,6 +318,71 @@
         </article>
 
         <article class="card">
+          <h3>IP Configuration</h3>
+          <code class="command">ipconfig /all</code>
+          <div class="label">Purpose</div>
+          <p>Displays detailed network adapter information including IP address, DNS servers, DHCP status, MAC address, and gateway configuration.</p>
+          <div class="label">Use When</div>
+          <ul>
+            <li>You need to verify the device received a valid IP address.</li>
+            <li>You are checking DNS or DHCP configuration.</li>
+            <li>You need adapter information during ticket documentation.</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3>Basic Connectivity Test</h3>
+          <code class="command">ping hostname-or-ip</code>
+          <div class="label">Purpose</div>
+          <p>Tests connectivity between the local machine and another device or server.</p>
+          <div class="label">Use When</div>
+          <ul>
+            <li>You need to verify basic network communication.</li>
+            <li>A user cannot reach a server or website.</li>
+            <li>You need to identify packet loss or latency issues.</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3>Trace Network Route</h3>
+          <code class="command">tracert hostname-or-ip</code>
+          <div class="label">Purpose</div>
+          <p>Shows the path traffic takes across the network to reach a destination.</p>
+          <div class="label">Use When</div>
+          <ul>
+            <li>You suspect routing or ISP-related issues.</li>
+            <li>You need to identify where network traffic stops.</li>
+            <li>Users experience intermittent external connectivity.</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3>Flush DNS Cache</h3>
+          <code class="command">ipconfig /flushdns</code>
+          <div class="label">Purpose</div>
+          <p>Clears the locally cached DNS records stored on the computer.</p>
+          <div class="label">Use When</div>
+          <ul>
+            <li>DNS changes were recently made.</li>
+            <li>A hostname resolves incorrectly.</li>
+            <li>You suspect stale DNS cache entries.</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3>Release and Renew DHCP Lease</h3>
+          <code class="command">ipconfig /release &amp;&amp; ipconfig /renew</code>
+          <div class="label">Purpose</div>
+          <p>Requests a new IP address from the DHCP server.</p>
+          <div class="label">Use When</div>
+          <ul>
+            <li>The device has an APIPA address (169.254.x.x).</li>
+            <li>The network adapter lost connectivity.</li>
+            <li>You need to refresh network configuration from DHCP.</li>
+          </ul>
+        </article>
+
+        <article class="card">
           <h3>Active Connections & Ports</h3>
           <code class="command">netstat -ano</code>
           <div class="label">Purpose</div>
