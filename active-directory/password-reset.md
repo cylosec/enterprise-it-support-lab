@@ -2,181 +2,174 @@
 
 ## Objective
 
-Provide a standardized process for securely resetting user passwords in Active Directory while maintaining security, documentation, and user access continuity.
+This is a standard process I’d typically follow when helping a user regain access to their account in Active Directory.
 
-This procedure supports common Service Desk operations for:
+Most password reset tickets usually involve:
 
-* Forgotten passwords
-* Account lockouts
-* First-time login password resets
-* Temporary password assignment
-* Credential access restoration
+- Forgotten passwords  
+- Locked accounts  
+- First-time logins  
+- Temporary password resets  
+- Remote users unable to authenticate  
+
+The goal is to restore access quickly while still following proper security and verification procedures.
 
 ---
 
-# Step 1: Verify User Identity
+# Step 1: Verify the User First
 
-Before resetting any password, verify the user’s identity using approved internal verification methods.
+Before resetting anything, always verify the user’s identity.
 
-Examples include:
+Depending on the environment, this could include:
 
-* Employee ID
-* Manager verification
-* Registered phone confirmation
-* Security verification questions
-* Internal ticket approval from supervisor
+- Employee ID  
+- Manager confirmation  
+- Call-back verification  
+- MFA confirmation  
+- Existing support ticket approval  
 
-Never reset passwords without proper verification.
+Even for something as simple as a password reset, it’s important not to skip verification steps.
 
 ---
 
 # Step 2: Open Active Directory Users and Computers
 
-Launch:
-
-```text id="2ozz8s"
-Active Directory Users and Computers (ADUC)
-```
-
-Path:
-
-```text id="m5a7kc"
-Start Menu → Administrative Tools → Active Directory Users and Computers
-```
-
-Or run:
+Usually I’ll open:
 
 ```powershell
 dsa.msc
 ```
 
+Or navigate through:
+
+```text
+Start Menu → Administrative Tools → Active Directory Users and Computers
+```
+
 ---
 
-# Step 3: Locate the User Account
+# Step 3: Find the User Account
 
-Search for the user by:
+Search using:
 
-* First and last name
-* Username
-* Employee ID (if naming standards support it)
+- Username  
+- Full name  
+- Employee ID  
+- Email address (depending on naming standards)
 
-Verify:
+Before making changes, I usually double-check:
 
-* Correct department
-* Correct Organizational Unit (OU)
-* Correct manager assignment
-* Account status
+- Correct department  
+- Correct OU  
+- Account status  
+- Whether the account is disabled or locked out  
 
-Confirm you are modifying the correct account.
+Easy mistake to make in larger environments if names are similar.
 
 ---
 
 # Step 4: Reset the Password
 
-Right-click the user account:
+Right-click the account → **Reset Password**
 
-```text id="rnay5s"
-Reset Password
-```
+Normally I’ll:
 
-Set:
+- Set a temporary password  
+- Require the user to change it at next login  
 
-* Temporary password
-* Require password change at next logon
+Typical settings:
 
-Recommended:
-
-```text id="h62gkr"
+```text
 ☑ User must change password at next logon
 ☐ User cannot change password
 ☐ Password never expires
 ```
 
-Avoid disabling security controls unless specifically approved.
+I usually avoid touching additional security settings unless there’s a specific reason or approval.
 
 ---
 
-# Step 5: Unlock Account (If Locked)
+# Step 5: Unlock the Account (If Needed)
 
-Check:
+A lot of tickets are actually lockout issues instead of forgotten passwords.
 
-```text id="b65cf7"
-Account is locked out
-```
+If the account shows locked:
 
-If enabled:
-
-```text id="owx0zt"
+```text
 ☑ Unlock account
 ```
 
-This is commonly required after multiple failed login attempts.
+This usually happens after too many failed login attempts, old cached credentials, or expired passwords on mobile devices.
 
 ---
 
-# Step 6: Confirm Additional Access Issues
+# Step 6: If Login Still Fails
 
-If login still fails after password reset, verify:
+Sometimes resetting the password doesn’t fully resolve the issue.
 
-* VPN connection
-* MFA prompts
-* Citrix Workspace session lock
-* Cached credential issues
-* RDP disconnected sessions
-* Domain trust relationship issues
+At that point I’d start checking things like:
 
-Password reset alone may not resolve the incident.
+- VPN connectivity  
+- MFA prompts  
+- Cached credentials  
+- Citrix Workspace sessions  
+- RDP session locks  
+- DNS/domain communication issues  
+- Whether the device is still talking to the domain properly  
+
+A lot of “password issues” end up being authentication or connectivity problems instead.
 
 ---
 
-# Step 7: Document the Ticket
+# Step 7: Document Everything
 
-Record:
+For ticket notes, I try to keep documentation short but clear.
 
-* User verification completed
-* Password reset performed
-* Account unlocked (if applicable)
-* Temporary password provided securely
-* Additional troubleshooting performed
-* Final resolution status
+Usually including:
 
-Good documentation protects both security and audit requirements.
+- User verification completed  
+- Password reset performed  
+- Account unlocked  
+- Temporary password delivered securely  
+- Additional troubleshooting steps  
+- Confirmation user regained access  
+
+Good documentation helps both the next technician and audit/security reviews later.
 
 ---
 
 # Example Ticket Note
 
-```text id="35ec6n"
-User identity verified via manager approval and employee ID.
+```text
+Verified user identity through manager approval and employee verification.
 
-Reset AD password and required password change at next login.
-Unlocked account due to failed login attempt lockout.
+Reset Active Directory password and required password change at next login.
+Unlocked account after multiple failed login attempts.
 
-Confirmed successful login after password update.
-Issue resolved and ticket closed.
+User confirmed successful login after password update.
+Issue resolved.
 ```
 
 ---
 
 # Security Notes
 
-Never:
+A few things I always avoid:
 
-* Send passwords through unsecured email
-* Share passwords with unauthorized personnel
-* Bypass verification steps
-* Disable password policies without approval
+- Sending passwords through unsecured email  
+- Skipping identity verification  
+- Disabling password policies unnecessarily  
+- Sharing credentials with unauthorized users  
 
-Always follow least privilege and security policy requirements.
-
----
-
-# Related Procedures
-
-* Account Lockout Resolution
-* New User Creation
-* Group Membership Management
-* MFA Access Troubleshooting
-* Citrix Workspace Login Issues
+Even simple Service Desk tickets still fall under security responsibility.
 
 ---
+
+# Related Issues Often Connected
+
+- MFA problems  
+- VPN login failures  
+- Citrix login issues  
+- Account lockouts  
+- Remote user authentication issues  
+- Password sync problems in hybrid environments
