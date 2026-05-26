@@ -2,80 +2,75 @@
 
 ## Objective
 
-Provide a standardized process for securely creating new user accounts in Active Directory while ensuring proper access control, documentation, and onboarding readiness.
+This is the standard process I’d typically follow when creating new user accounts in Active Directory.
 
-This procedure supports:
+Most onboarding requests usually involve:
 
-* New employee onboarding
-* Department transfers requiring new access
-* Contractor account provisioning
-* Temporary staff onboarding
-* Privileged access requests with approval
+- New employee setup  
+- Contractor onboarding  
+- Department transfers  
+- VPN access requests  
+- Microsoft 365 provisioning  
+- Citrix access setup  
+- Shared drive permissions  
 
-Proper provisioning reduces security risk and improves first-day productivity.
-
----
-
-# Step 1: Verify Approved Request
-
-Before creating any account, confirm there is an approved onboarding request.
-
-Required approval may include:
-
-* HR onboarding request
-* Manager approval
-* Department authorization
-* Security approval for privileged access
-* Ticket created through approved service desk workflow
-
-Never create accounts without documented authorization.
+The goal is to get users operational on day one while still following proper security and access control procedures.
 
 ---
 
-# Step 2: Gather Required Information
+# Step 1: Verify the Request First
 
-Confirm the following:
+Before creating any account, I usually confirm there’s an approved onboarding request.
 
-* Full legal name
-* Job title
-* Department
-* Manager
-* Start date
-* Username naming standard
-* Required applications
-* Required security groups
-* Required shared mailbox access
-* VPN access requirements
-* Citrix access requirements
-* MFA enrollment requirements
+Depending on the environment, this could include:
 
-Access should be based on least privilege.
+- HR onboarding approval  
+- Manager authorization  
+- Department request  
+- Security approval for elevated access  
+- Valid Service Desk ticket  
+
+I never want to create accounts without documentation or approval attached to the request.
+
+---
+
+# Step 2: Gather User Information
+
+Before opening AD, I normally verify:
+
+- Full legal name  
+- Job title  
+- Department  
+- Assigned manager  
+- Start date  
+- Username format  
+- Required applications  
+- VPN requirements  
+- MFA requirements  
+- Shared mailbox access  
+- Citrix access if applicable  
+
+I try to follow least privilege as much as possible instead of overprovisioning access right away.
 
 ---
 
 # Step 3: Open Active Directory Users and Computers
 
-Launch:
+Usually I’ll launch:
 
-```text id="0lf7dr"
-Active Directory Users and Computers (ADUC)
-```
-
-Or run:
-
-```powershell id="3wq8np"
+```powershell
 dsa.msc
 ```
 
-Navigate to the correct Organizational Unit (OU).
+Then navigate to the correct OU.
 
 Example:
 
-```text id="6u7n0x"
+```text
 Users → Finance → Standard Users
 ```
 
-Correct OU placement is important for Group Policy and security controls.
+Correct OU placement matters because it affects Group Policy, login scripts, security settings, and overall organization.
 
 ---
 
@@ -83,121 +78,122 @@ Correct OU placement is important for Group Policy and security controls.
 
 Right-click the OU:
 
-```text id="rxn0r2"
+```text
 New → User
 ```
 
-Enter:
+Then enter:
 
-* First name
-* Last name
-* Full display name
-* Username (logon name)
+- First name  
+- Last name  
+- Display name  
+- Username/logon name  
 
-Follow company naming standards consistently.
+Depending on the environment, naming standards might look like:
 
-Example:
-
-```text id="lz6d3z"
+```text
 firstname.lastname
 flastname
 employeeID format
 ```
 
-depending on organizational policy.
+Consistency is important in larger environments.
 
 ---
 
-# Step 5: Set Initial Password
+# Step 5: Configure the Initial Password
 
-Configure:
+Normally I’ll:
 
-* Temporary password
-* Require password change at first login
+- Set a temporary password  
+- Require password change at first login  
 
-Recommended:
+Typical settings:
 
-```text id="yrv8xw"
+```text
 ☑ User must change password at next logon
 ☐ User cannot change password
 ☐ Password never expires
 ```
 
-Avoid exceptions unless specifically approved.
+I usually avoid exceptions unless they’re specifically approved.
 
 ---
 
 # Step 6: Assign Group Memberships
 
-Add the user to required security groups.
+Next I’ll add the user into the required groups.
 
-Examples:
+Common examples:
 
-* Department access groups
-* Shared drive permissions
-* Distribution groups
-* VPN access group
-* Citrix application access
-* Printer access groups
-* Microsoft 365 licensing groups
+- Department access groups  
+- Shared drive permissions  
+- Distribution lists  
+- VPN access groups  
+- Citrix application groups  
+- Printer access groups  
+- Microsoft 365 licensing groups  
 
-Never assign Domain Admin or privileged groups without formal approval.
-
----
-
-# Step 7: Configure Additional Access
-
-Verify setup for:
-
-* Microsoft 365 mailbox
-* VPN access
-* MFA enrollment
-* Citrix Workspace access
-* Shared mailbox permissions
-* RDP access (if approved)
-* Line-of-business applications
-
-Provisioning often extends beyond Active Directory.
+I try to avoid assigning elevated privileges unless there’s documented approval.
 
 ---
 
-# Step 8: Validate Account Readiness
+# Step 7: Configure Additional Services
 
-Confirm:
+Provisioning usually extends beyond just Active Directory.
 
-* Account is enabled
-* Correct OU placement
-* Group memberships assigned
-* Licensing completed
-* Login ready for start date
+I’ll typically verify setup for:
 
-Prevent first-day access failures whenever possible.
+- Microsoft 365 mailbox  
+- VPN access  
+- MFA enrollment  
+- Citrix Workspace access  
+- Shared mailbox permissions  
+- RDP access if approved  
+- Business applications  
+
+A lot of onboarding tickets fail because one small service gets missed.
+
+---
+
+# Step 8: Validate the Account
+
+Before closing the ticket, I usually confirm:
+
+- Account is enabled  
+- User is in the correct OU  
+- Group memberships are correct  
+- Licensing completed successfully  
+- Login is ready for start date  
+
+The goal is avoiding first-day login issues whenever possible.
 
 ---
 
 # Step 9: Document the Ticket
 
-Record:
+For documentation, I usually include:
 
-* Request approval verified
-* User account created
-* Temporary password assigned securely
-* Groups assigned
-* Additional services provisioned
-* Manager notified
-* Final onboarding completion status
+- Approval verified  
+- User account created  
+- Temporary password delivered securely  
+- Groups assigned  
+- Additional services configured  
+- Manager notified  
+- Final onboarding status  
 
-Strong documentation supports audits and compliance.
+Good documentation helps with audits and future troubleshooting.
 
 ---
 
 # Example Ticket Note
 
-```text id="pv0prz"
+```text
 Verified HR onboarding request and manager approval.
 
-Created new AD user account for John Smith in Finance OU.
-Assigned standard Finance security groups, VPN access, Microsoft 365 license, and Citrix application access.
+Created new Active Directory user account for John Smith in Finance OU.
+
+Assigned standard Finance security groups, Microsoft 365 licensing, VPN access, and Citrix application permissions.
 
 Temporary password issued securely with required password change at first login.
 
@@ -208,24 +204,23 @@ Manager notified and onboarding completed successfully.
 
 # Security Notes
 
-Never:
+A few things I try to avoid:
 
-* Create accounts without approval
-* Overprovision access
-* Assign privileged access casually
-* Reuse old accounts for new employees
-* Share passwords insecurely
+- Creating accounts without approval  
+- Overprovisioning access  
+- Assigning privileged groups casually  
+- Reusing old employee accounts  
+- Sharing passwords insecurely  
 
-Always follow least privilege and formal onboarding controls.
+User provisioning directly impacts identity and access security across the environment.
 
 ---
 
 # Related Procedures
 
-* Password Reset Procedure
-* Group Membership Management
-* Computer Account Management
-* MFA Enrollment Support
-* Citrix Workspace Access Setup
-
----
+- Password Reset Procedure  
+- Group Membership Management  
+- VPN Access Support  
+- MFA Enrollment  
+- Citrix Workspace Access Setup  
+- Computer Account Management
