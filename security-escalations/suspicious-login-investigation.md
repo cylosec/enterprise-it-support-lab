@@ -1,192 +1,199 @@
 # Suspicious Login Investigation Procedure
-Priority: High (P2)
 
-Reason:
+## Priority: High (P2)
+
+### Reason
+
 Potential account compromise involving authentication anomalies, possible credential exposure, and elevated business risk if unauthorized access is successful.
 
-## Objective
+---
 
-Provide a standardized process for identifying, documenting, and escalating suspicious login activity in enterprise environments.
+# Objective
 
-This procedure supports:
+This is the standard process I’d typically follow when investigating suspicious login activity in an enterprise environment.
 
-* Multiple failed login attempts
-* Login attempts from unusual locations
-* Privileged account access anomalies
-* Impossible travel alerts
-* VPN authentication anomalies
-* MFA bypass concerns
-* After-hours administrative access
-* Wazuh SIEM authentication alerts
+Most of these investigations usually involve:
 
-Proper investigation helps prevent account compromise and improves security response.
+- Multiple failed login attempts  
+- Unusual login locations  
+- VPN authentication anomalies  
+- Impossible travel alerts  
+- MFA concerns  
+- Privileged account activity  
+- After-hours administrative logins  
+- Wazuh SIEM authentication alerts  
+
+The goal is to quickly determine whether the activity is legitimate, contain potential compromise, and escalate if necessary.
 
 ---
 
 # Step 1: Identify the Alert
 
-Common sources include:
+Suspicious login alerts can come from several places, including:
 
-* Wazuh SIEM alerts
-* VPN authentication logs
-* Microsoft 365 sign-in alerts
-* Domain Controller security logs
-* User reports of unexpected lockouts
-* MFA push notifications not initiated by the user
+- Wazuh SIEM alerts  
+- VPN authentication logs  
+- Microsoft 365 sign-in alerts  
+- Domain Controller security logs  
+- User-reported lockouts  
+- Unexpected MFA push notifications  
 
-Common indicators:
+Common indicators I usually look for:
 
-* Repeated failed login attempts
-* Successful login from unfamiliar location
-* Privileged account login outside business hours
-* Multiple devices attempting authentication
+- Multiple failed login attempts  
+- Successful login from unfamiliar location  
+- Administrative access outside business hours  
+- Multiple devices attempting authentication  
+- Repeated lockout behavior  
 
-Never ignore repeated failed logins tied to privileged accounts.
+Repeated failed logins tied to privileged accounts are something I never ignore.
 
 ---
 
 # Step 2: Validate the User
 
-Confirm:
+Before assuming compromise, I’ll usually verify:
 
-* User identity
-* Current location
-* Whether the login attempt was legitimate
-* Whether the user recently changed password
-* Whether multiple devices are involved
-* VPN usage expectations
+- User identity  
+- Current location  
+- Whether the login was expected  
+- Recent password changes  
+- VPN usage expectations  
+- Whether multiple devices are involved  
 
-Questions to ask:
+Typical questions I’d ask:
 
-* “Were you trying to log in during this time?”
-* “Are you traveling or working remotely?”
-* “Did you approve an MFA request recently?”
-* “Did you recently change your password?”
+- “Were you attempting to log in during this timeframe?”  
+- “Are you currently traveling or working remotely?”  
+- “Did you approve any MFA prompts recently?”  
+- “Did you recently change your password?”  
 
-Never assume a successful login is legitimate without validation.
+Even successful logins still need validation if the behavior looks unusual.
 
 ---
 
 # Step 3: Review Authentication Logs
 
-Check:
+Next I’ll review available authentication logs and alert data.
 
-* Source IP address
-* Timestamp
-* Username
-* Login result (success/failure)
-* Device involved
-* Authentication method
-* MFA status
-* VPN source details
+Things I normally check:
 
-Examples:
+- Source IP address  
+- Timestamp  
+- Username  
+- Success vs failure attempts  
+- Device information  
+- Authentication method  
+- MFA status  
+- VPN source information  
 
-* Windows Security Event Logs
-* Wazuh alert data
-* VPN logs
-* Microsoft 365 sign-in history
-* Firewall authentication logs
+Common log sources include:
 
-Focus on patterns, not single events.
+- Windows Security Event Logs  
+- Wazuh alerts  
+- Microsoft 365 sign-in history  
+- VPN logs  
+- Firewall authentication logs  
+
+I usually focus more on behavior patterns instead of isolated events.
 
 ---
 
 # Step 4: Identify Risk Indicators
 
-Examples:
+Higher-risk indicators usually include:
 
-* Unknown external IP
-* Geographic impossibility
-* Brute-force pattern
-* Service account abuse
-* Privileged account misuse
-* Repeated lockout behavior
-* Login from TOR/VPN providers
-* Authentication attempts after termination
-* Multiple failed attempts followed by success
+- Unknown external IPs  
+- Impossible travel activity  
+- Brute-force login behavior  
+- Service account abuse  
+- Privileged account misuse  
+- TOR/VPN provider usage  
+- Authentication attempts after termination  
+- Multiple failures followed by successful login  
 
-Higher risk requires faster escalation.
+The higher the risk indicators, the faster I’d escalate.
 
 ---
 
 # Step 5: Immediate Containment Actions
 
-If risk is elevated:
+If compromise risk appears elevated, I’d usually move into containment immediately.
 
-* Reset password
-* Unlock account if needed
-* Force MFA revalidation
-* Disable account temporarily if necessary
-* Revoke active sessions if available
-* Notify Security Team
-* Preserve logs for investigation
+Typical actions:
 
-Containment should prioritize preventing compromise first.
+- Reset password  
+- Unlock account if needed  
+- Force MFA revalidation  
+- Disable account temporarily if necessary  
+- Revoke active sessions if available  
+- Notify Security Team  
+- Preserve logs and evidence  
 
-Do not wait for full analysis if the account may be compromised.
+I’d rather secure the account quickly than wait too long trying to fully analyze the activity first.
 
 ---
 
-# Step 6: Escalate if Required
+# Step 6: Escalate if Necessary
 
-Escalate immediately for:
+I’d escalate immediately for situations involving:
 
-* Confirmed unauthorized access
-* Privileged account exposure
-* Successful compromise indicators
-* Lateral movement concerns
-* Multiple affected accounts
-* Business-critical systems involved
-* Repeated suspicious behavior after password reset
+- Confirmed unauthorized access  
+- Privileged account exposure  
+- Successful compromise indicators  
+- Multiple affected accounts  
+- Lateral movement concerns  
+- Business-critical systems  
+- Continued suspicious behavior after password reset  
 
-Help Desk should escalate early rather than delay.
+In security situations, escalating early is usually better than escalating late.
 
 ---
 
 # Step 7: Confirm Recovery
 
-Verify:
+Before resolving the incident, I usually verify:
 
-* User access restored securely
-* Password reset successful
-* MFA functioning properly
-* No ongoing suspicious activity
-* Monitoring continues if required
+- User access restored securely  
+- Password reset successful  
+- MFA functioning correctly  
+- No ongoing suspicious activity  
+- Monitoring continues if needed  
 
-Resolution should include prevention, not only restoration.
+The goal isn’t just restoring access — it’s making sure the account is actually secure afterward.
 
 ---
 
 # Step 8: Document the Ticket
 
-Record:
+For documentation, I normally include:
 
-* Alert source
-* Validation steps
-* Log findings
-* Containment actions
-* Escalation path
-* Final resolution status
+- Alert source  
+- Validation steps  
+- Authentication log findings  
+- Containment actions performed  
+- Escalation path  
+- Final resolution status  
 
-Strong documentation is critical for audits and incident review.
+Strong documentation becomes important later during audits or incident review.
 
 ---
 
 # Example Ticket Note
 
-```text id="j7p4vm"
-Wazuh alert triggered for repeated failed VPN login attempts against user j.smith.
+```text
+Wazuh alert triggered for repeated failed VPN login attempts targeting user j.smith.
 
-Verified with user that no login attempts were initiated during alert window.
-Authentication logs showed 17 failed attempts from unfamiliar external IP.
+Verified with user that no login attempts were initiated during the alert timeframe.
+
+Authentication logs identified 17 failed login attempts from unfamiliar external IP address.
 
 Password reset completed, account unlocked, and MFA revalidation enforced.
 
-Escalated to Security Team for source IP review and continued monitoring.
+Escalated to Security Team for source IP investigation and continued monitoring.
 
 No successful compromise confirmed.
-Incident resolved.
+Incident resolved successfully.
 ```
 
 ---
@@ -197,39 +204,38 @@ Incident resolved.
 
 “How would you handle a suspicious login alert?”
 
-## Strong Answer
+## My Answer
 
-```text id="y3v8kn"
-I would first validate whether the login was legitimate by confirming with the user and reviewing authentication logs.
+```text
+I’d first verify whether the login activity was legitimate by confirming with the user and reviewing authentication logs.
 
-I would check source IP, login timestamps, MFA status, and whether there were repeated failures or unusual locations involved.
+I’d check things like source IP address, login timestamps, MFA status, repeated failures, and whether unusual locations or VPN activity were involved.
 
-If risk is elevated, I would reset the password, secure the account, preserve logs, and escalate to Security immediately if compromise or privileged access is involved.
+If the risk appeared elevated, I’d immediately secure the account, preserve evidence, and escalate to Security if compromise or privileged access exposure was suspected.
 ```
 
-This answer performs very well in interviews because it shows both Help Desk judgment and SOC escalation awareness.
+This type of response usually works well because it demonstrates both Help Desk troubleshooting and security escalation awareness.
 
 ---
 
 # Security Notes
 
-Never:
+A few things I try to avoid:
 
-* Ignore repeated failed login patterns
-* Assume success means legitimate access
-* Delay escalation for privileged account alerts
-* Reset passwords without preserving useful evidence
+- Ignoring repeated failed login patterns  
+- Assuming successful login automatically means legitimate access  
+- Delaying escalation for privileged account alerts  
+- Resetting accounts without preserving useful evidence  
 
-Security response should balance speed, containment, and documentation.
+Security response needs to balance speed, containment, and proper documentation.
 
 ---
 
 # Related Procedures
 
-* Account Lockout Resolution
-* Password Reset Procedure
-* Incident Response Ticket Template
-* Phishing Escalation
-* Wazuh Alert Triage
-
----
+- Account Lockout Resolution  
+- Password Reset Procedure  
+- Incident Response Ticket Template  
+- Phishing Escalation  
+- Wazuh Alert Triage  
+- MFA Troubleshooting
