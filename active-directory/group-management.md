@@ -2,92 +2,86 @@
 
 ## Objective
 
-Provide a standardized process for securely managing user group memberships in Active Directory while maintaining least privilege, access control, and audit compliance.
+This is the standard process I’d typically follow when managing user group memberships in Active Directory.
 
-This procedure supports:
+Most of these requests usually involve:
 
-* Access requests
-* Department transfers
-* Role changes
-* Shared drive permissions
-* Application access provisioning
-* VPN and Citrix access
-* Printer access groups
-* Privileged access approval workflows
+- Shared drive access  
+- Department transfers  
+- VPN access  
+- Citrix access  
+- Application permissions  
+- Printer access  
+- Role changes  
+- Privileged access requests  
 
-Improper group assignments are one of the most common security risks in enterprise environments.
-
----
-
-# Step 1: Verify Approved Access Request
-
-Before modifying any group membership, confirm there is documented approval.
-
-Required approval may include:
-
-* Manager authorization
-* Department owner approval
-* Application owner approval
-* Security approval for privileged access
-* Service desk ticket with proper documentation
-
-Never modify access without approval.
+Group management is one of those areas where small mistakes can create major security issues, so I always try to verify access carefully before making changes.
 
 ---
 
-# Step 2: Identify Required Access
+# Step 1: Verify the Access Request
 
-Confirm:
+Before modifying any permissions, I usually confirm the request has proper approval.
 
-* User account
-* Requested resource
-* Required access level
-* Temporary or permanent access
-* Start and end date (if temporary)
-* Existing access conflicts
+Depending on the environment, this could include:
 
-Avoid adding users to broad groups when a narrower permission set is appropriate.
+- Manager approval  
+- Department authorization  
+- Application owner approval  
+- Security approval for elevated access  
+- Valid Service Desk ticket documentation  
+
+I never want to add permissions without some kind of authorization trail.
+
+---
+
+# Step 2: Confirm the Required Access
+
+Before touching AD, I normally verify:
+
+- Correct user account  
+- What resource they need access to  
+- Level of access required  
+- Whether the access is temporary or permanent  
+- Start/end dates if temporary  
+- Existing permissions that might conflict  
+
+I try to avoid adding users into overly broad groups if there’s a more limited access option available.
 
 ---
 
 # Step 3: Open Active Directory Users and Computers
 
-Launch:
+Usually I’ll launch:
 
-```text id="2p6w1z"
-Active Directory Users and Computers (ADUC)
-```
-
-Or run:
-
-```powershell id="w7j2ka"
+```powershell
 dsa.msc
 ```
 
-Locate the affected user account.
+Then locate the user account in ADUC.
 
 ---
 
 # Step 4: Review Existing Group Memberships
 
-Right-click user:
+Right-click the user:
 
-```text id="9k4vtx"
+```text
 Properties → Member Of
 ```
 
-Review:
+I usually review things like:
 
-* Department groups
-* Shared drive access
-* Application access groups
-* VPN access groups
-* Citrix delivery groups
-* Printer access groups
-* Distribution groups
-* Administrative privilege groups
+- Department groups  
+- Shared drive access  
+- Application access groups  
+- VPN groups  
+- Citrix delivery groups  
+- Printer groups  
+- Distribution lists  
+- Administrative groups  
 
-This helps prevent duplicate or conflicting permissions.
+This helps avoid duplicate permissions or leftover access from previous roles.
 
 ---
 
@@ -95,100 +89,101 @@ This helps prevent duplicate or conflicting permissions.
 
 Use:
 
-```text id="s8x1md"
+```text
 Add…
 ```
 
-or remove outdated memberships when appropriate.
+Or remove outdated memberships when needed.
 
-Examples:
+Common examples:
 
-* Add to Finance Shared Drive group
-* Remove from former department group
-* Add VPN Remote Access group
-* Add Citrix application access group
+- Add user to Finance shared drive group  
+- Remove old department permissions  
+- Add VPN Remote Access group  
+- Add Citrix application access  
+- Update printer access groups  
 
-Avoid assigning users directly to highly privileged groups.
-
----
-
-# Step 6: Validate Access Propagation
-
-Confirm:
-
-* Replication completed
-* Login refresh completed
-* VPN reconnect performed
-* Citrix session refreshed
-* Outlook restarted if mailbox access changed
-
-Some permissions require session refresh before taking effect.
+I try to avoid assigning highly privileged access unless it’s specifically approved.
 
 ---
 
-# Step 7: Review Privileged Access Carefully
+# Step 6: Validate Access Changes
 
-Special handling required for:
+After updating memberships, I usually confirm:
 
-* Local Administrators
-* Server access
-* Domain Admins
-* Application administrators
-* Security tooling access
-* Remote privileged access
+- AD replication completed  
+- User logged out and back in  
+- VPN reconnected if needed  
+- Citrix session refreshed  
+- Outlook restarted if mailbox permissions changed  
 
-These changes often require security review and stronger documentation.
+A lot of users think the change “didn’t work” when the session just hasn’t refreshed yet.
+
+---
+
+# Step 7: Handle Privileged Access Carefully
+
+Extra caution is usually needed for groups involving:
+
+- Local Administrator access  
+- Server administration  
+- Domain Admins  
+- Security tooling  
+- Remote privileged access  
+- Application administration  
+
+These changes normally require stronger documentation and security review.
 
 ---
 
 # Step 8: Document the Ticket
 
-Record:
+For documentation, I usually include:
 
-* Approval source verified
-* Group added or removed
-* Access type granted
-* Temporary vs permanent access
-* Validation completed
-* Final resolution status
+- Approval verified  
+- Groups added or removed  
+- Type of access granted  
+- Temporary vs permanent access  
+- Validation completed  
+- User confirmed access  
+- Final resolution status  
 
-Documentation is critical for audits and access reviews.
+Good documentation helps during audits and future access reviews.
 
 ---
 
 # Example Ticket Note
 
-```text id="m4v2jk"
-Verified manager approval for Finance shared drive access.
+```text
+Verified manager approval for Finance shared drive access request.
 
 Added user to Finance_RW security group and removed previous Sales department access group.
 
-Confirmed successful access after user re-login and VPN reconnect.
+Confirmed successful access after user logout/login and VPN reconnect.
 
-Access request completed and ticket closed.
+Access request completed successfully.
 ```
 
 ---
 
 # Security Notes
 
-Never:
+A few things I try to avoid:
 
-* Grant access without approval
-* Leave outdated permissions after role changes
-* Add users to privileged groups casually
-* Ignore least privilege requirements
+- Granting access without approval  
+- Leaving old permissions active after role changes  
+- Adding users to privileged groups casually  
+- Ignoring least privilege principles  
 
-Access management is one of the most audited areas in IT operations.
+Group management is one of the biggest areas tied to identity and access security.
 
 ---
 
 # Related Procedures
 
-* New User Creation
-* Password Reset Procedure
-* Computer Account Management
-* VPN Access Support
-* Citrix Workspace Access Setup
-
----
+- New User Provisioning  
+- Password Reset Procedure  
+- VPN Troubleshooting  
+- Citrix Access Support  
+- Shared Drive Access Requests  
+- Computer Account Management
