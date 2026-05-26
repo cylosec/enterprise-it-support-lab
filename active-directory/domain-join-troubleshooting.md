@@ -2,129 +2,130 @@
 
 ## Objective
 
-Provide a standardized process for diagnosing and resolving domain join failures in Active Directory environments.
+This is the process I’d typically follow when troubleshooting systems that fail to join an Active Directory domain.
 
-This procedure supports:
+Most of these issues usually involve:
 
-* New workstation deployment
-* Reimaged systems
-* Replacement devices
-* Trust relationship failures
-* DNS-related domain join issues
-* Authentication failures during domain enrollment
+- New workstation deployments  
+- Reimaged systems  
+- Replacement devices  
+- DNS problems  
+- Authentication failures  
+- Trust relationship errors  
 
-Successful domain joins are critical for policy enforcement, authentication, and enterprise access control.
-
----
-
-# Step 1: Verify Basic Requirements
-
-Before joining a machine to the domain, confirm:
-
-* Correct hostname assigned
-* Network connectivity available
-* Proper DNS server configured
-* Reachability to Domain Controller
-* Valid domain credentials available
-* Time synchronization is correct
-* Device is not already joined incorrectly
-
-Most domain join failures begin with DNS or connectivity issues.
+A successful domain join is important because it affects authentication, Group Policy, shared resources, remote access, and overall endpoint management.
 
 ---
 
-# Step 2: Confirm DNS Configuration
+# Step 1: Verify the Basics First
 
-Run:
+Before attempting a domain join, I usually confirm:
 
-```powershell id="7knf4s"
+- Correct hostname assigned  
+- Network connectivity is working  
+- Proper DNS server configured  
+- Domain Controller is reachable  
+- Valid credentials are available  
+- System time is accurate  
+- Device isn’t already partially joined to the domain  
+
+Honestly, most domain join issues end up being DNS-related.
+
+---
+
+# Step 2: Check DNS Configuration
+
+First thing I normally run:
+
+```powershell
 ipconfig /all
 ```
 
-Verify:
+Then verify:
 
-* Preferred DNS points to internal Domain Controller
-* Not public DNS like 8.8.8.8 or ISP DNS
-* Correct subnet and gateway
+- Preferred DNS points to the internal Domain Controller  
+- Not public DNS like 8.8.8.8  
+- Correct subnet and gateway settings  
 
 Example:
 
-```text id="vw8gk1"
+```text
 DNS Server: 10.0.0.66
 ```
 
-Incorrect DNS is the most common cause of join failures.
+If DNS is wrong, Active Directory usually won’t work correctly at all.
 
 ---
 
 # Step 3: Test Domain Controller Connectivity
 
-Run:
+Next I’ll test connectivity:
 
-```powershell id="oljlwm"
+```powershell
 ping domaincontroller
 ping cylosec.local
 nslookup cylosec.local
 ```
 
-Also verify SRV records:
+Then verify LDAP SRV records:
 
-```powershell id="r8m0yb"
+```powershell
 nslookup -type=SRV _ldap._tcp.dc._msdcs.cylosec.local
 ```
 
-Expected result:
+What I’m looking for:
 
-* Domain Controller resolves properly
-* LDAP service records return correctly
+- Domain Controller resolves properly  
+- LDAP records return correctly  
+- DNS can discover AD services  
 
-This confirms AD discovery is working.
+If SRV records fail, the workstation usually won’t locate the domain correctly.
 
 ---
 
-# Step 4: Verify Time Synchronization
+# Step 4: Verify System Time
 
-Run:
+Kerberos authentication is sensitive to time drift.
 
-```powershell id="3qj0ze"
+I’ll usually check:
+
+```powershell
 w32tm /query /status
 ```
 
-Large time drift can break Kerberos authentication and prevent domain joins.
+If needed:
 
-Correct if needed:
-
-```powershell id="u5yz6f"
+```powershell
 w32tm /resync
 ```
 
+Large time differences between the workstation and Domain Controller can completely break authentication.
+
 ---
 
-# Step 5: Attempt Domain Join
+# Step 5: Attempt the Domain Join
 
-Navigate:
+Navigate to:
 
-```text id="l2pw1v"
+```text
 System Properties → Computer Name → Change
 ```
 
 Select:
 
-```text id="smk3d9"
+```text
 Domain
 ```
 
-Enter:
+Then enter:
 
-```text id="z4vy5n"
+```text
 cylosec.local
 ```
 
-Use authorized domain credentials.
+Use authorized credentials such as:
 
-Example:
-
-```text id="ys7g4q"
+```text
 Administrator
 Domain Admin account
 Delegated join account
@@ -134,135 +135,139 @@ depending on company policy.
 
 ---
 
-# Step 6: Common Error Troubleshooting
+# Step 6: Troubleshoot Common Errors
 
 ### Error:
 
-```text id="v0kh6y"
-The specified domain either does not exist or could not be contacted
+```text
+"The specified domain either does not exist or could not be contacted"
 ```
 
 Usually caused by:
 
-* DNS misconfiguration
-* Firewall blocking communication
-* Domain Controller offline
-* Network segmentation issues
+- Incorrect DNS  
+- Firewall issues  
+- Domain Controller offline  
+- VLAN or network segmentation issues  
+- VPN connectivity problems  
 
 ---
 
 ### Error:
 
-```text id="m8r5ns"
-Access is denied
+```text
+"Access is denied"
 ```
 
-Usually caused by:
+Usually related to:
 
-* Insufficient permissions
-* Incorrect credentials
-* Existing duplicate computer account
+- Incorrect credentials  
+- Lack of permissions  
+- Existing duplicate computer accounts  
+- AD object conflicts  
 
 ---
 
 ### Error:
 
-```text id="w3j9az"
-The trust relationship between this workstation and the primary domain failed
+```text
+"The trust relationship between this workstation and the primary domain failed"
 ```
 
-Usually resolved by:
+Typically resolved by:
 
-* Removing from domain
-* Rejoining domain
-* Resetting computer account in AD
+- Removing the device from the domain  
+- Rejoining the domain  
+- Resetting the computer account in AD  
+
+I’ve seen this happen pretty often after reimaging systems or restoring snapshots.
 
 ---
 
-# Step 7: Verify Computer Object in AD
+# Step 7: Verify the Computer Object in AD
 
-After successful join:
+After the join succeeds, I’ll open:
 
-Open:
-
-```text id="6x0pmt"
-Active Directory Users and Computers
+```powershell
+dsa.msc
 ```
 
-Confirm:
+Then verify:
 
-* Computer object exists
-* Correct hostname
-* Correct OU placement
-* Group Policy applies properly
+- Computer object exists  
+- Hostname is correct  
+- Device is in the correct OU  
+- Group Policy applies correctly  
 
-Move to correct OU if needed.
+If needed, I’ll move the workstation into the proper OU structure.
 
 ---
 
-# Step 8: Validate User Login
+# Step 8: Validate User Access
 
-Test:
+A successful domain join doesn’t just mean “it joined.”
 
-* Domain user login
-* Group Policy application
-* Shared drive access
-* Printer mapping
-* VPN access
-* Citrix access if required
+I usually test:
 
-Successful join must include operational validation.
+- Domain user login  
+- Group Policy updates  
+- Shared drive access  
+- Printer mappings  
+- VPN access  
+- Citrix access if applicable  
+
+This confirms the workstation is functioning properly in the environment.
 
 ---
 
 # Step 9: Document the Ticket
 
-Record:
+For documentation, I normally include:
 
-* DNS verified
-* Connectivity tested
-* Domain join completed
-* OU placement corrected
-* User login validated
-* Final resolution status
+- DNS verified  
+- Connectivity tested  
+- Domain join completed  
+- OU placement corrected  
+- User login validated  
+- Group Policy confirmed  
+- Final resolution status  
 
-Documentation improves repeatability and audit readiness.
+Good notes make future troubleshooting way easier.
 
 ---
 
 # Example Ticket Note
 
-```text id="e7wc5u"
-New Finance workstation unable to join domain due to incorrect public DNS assignment.
+```text
+New Finance workstation failed domain join due to incorrect public DNS configuration.
 
-Updated DNS to internal Domain Controller (10.0.0.66), verified LDAP SRV records, and completed successful domain join to cylosec.local.
+Updated workstation DNS settings to internal Domain Controller (10.0.0.66), verified LDAP SRV records, and completed successful domain join to cylosec.local.
 
-Moved system to Finance Workstations OU and confirmed successful domain user login and Group Policy application.
+Moved workstation into Finance Workstations OU and confirmed successful user authentication and Group Policy application.
 
-Issue resolved and deployment completed.
+Issue resolved successfully.
 ```
 
 ---
 
 # Security Notes
 
-Never:
+A few things I try to avoid:
 
-* Use public DNS for internal domain operations
-* Join devices without approval
-* Leave stale duplicate computer accounts unresolved
-* Ignore trust relationship failures
+- Using public DNS internally for AD environments  
+- Joining unauthorized devices to the domain  
+- Leaving duplicate or stale computer accounts active  
+- Ignoring trust relationship errors  
 
-Domain joins directly impact enterprise security posture.
+Domain joins directly affect identity and access management across the environment.
 
 ---
 
 # Related Procedures
 
-* Computer Account Management
-* DNS Troubleshooting
-* DHCP Management
-* RDP Troubleshooting
-* New User Creation
-
----
+- Computer Account Management  
+- DNS Troubleshooting  
+- DHCP Troubleshooting  
+- VPN Troubleshooting  
+- Group Policy Troubleshooting  
+- User Provisioning
