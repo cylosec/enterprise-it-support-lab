@@ -1,39 +1,37 @@
-# Service Request Ticket Template
+# Incident Response Ticket Template
 
 ## Objective
 
-Provide a standardized template for documenting routine IT support requests within Jira Service Management or enterprise ticketing systems.
+This is the standard format I’d typically use when documenting security incidents, escalations, or suspicious activity inside Jira Service Management or similar ticketing platforms.
 
-This template supports:
+Most of these tickets usually involve:
 
-* Password resets
-* New user onboarding
-* Access requests
-* Group membership changes
-* Printer setup
-* VPN access requests
-* Citrix access support
-* Software installation requests
-* Hardware provisioning
+- Suspicious login attempts  
+- Phishing reports  
+- Malware alerts  
+- Account lockouts  
+- Unauthorized access attempts  
+- VPN authentication failures  
+- Endpoint security alerts  
+- Wazuh SIEM escalations  
 
-Strong documentation improves support quality, accountability, and audit readiness.
+Good documentation helps speed up investigations, improves escalation quality, and keeps everything organized for audit and security review purposes.
 
 ---
 
 # Ticket Type
 
-## Service Request
+## Incident
 
-Used for:
+I’d usually use an Incident ticket for:
 
-* Planned user support
-* Standard access requests
-* Onboarding workflows
-* Equipment provisioning
-* Permission changes
-* Non-incident operational requests
+- Security events  
+- Service disruptions  
+- Access anomalies  
+- Potential policy violations  
+- Urgent operational issues  
 
-Service requests focus on delivery, not incident response.
+These types of tickets normally require investigation, ownership, and proper resolution tracking.
 
 ---
 
@@ -41,155 +39,167 @@ Service requests focus on delivery, not incident response.
 
 ## Summary
 
-Short, clear request description.
+Keep it short and clear.
 
 Example:
 
-```text id="v3j8nk"
-New Finance employee onboarding and access provisioning
+```text
+Multiple failed login attempts detected for Finance user account
 ```
 
 ---
 
 ## Priority
 
-Examples:
+Typical priorities:
 
-* Low
-* Medium
-* High
+- Low  
+- Medium  
+- High  
+- Critical  
 
-Priority should reflect business urgency and start-date requirements.
+I usually base priority on:
 
----
-
-## Requestor
-
-Who submitted the request.
-
-Examples:
-
-* Manager
-* HR
-* End user
-* Department supervisor
+- Business impact  
+- Security risk  
+- User impact  
+- Potential exposure  
 
 ---
 
-## Affected User
+## Reporter
 
-Document:
+Who submitted or generated the alert.
 
-* Full name
-* Username
-* Department
-* Manager
-* Start date
-* Device assignment if applicable
+Examples:
+
+- End user  
+- SOC Analyst  
+- Automated SIEM alert  
+- Security Team  
+- Manager  
+
+---
+
+## Affected User / Asset
+
+I normally document:
+
+- Username  
+- Hostname  
+- Department  
+- Device name  
+- IP address (sanitized if needed)  
+- Server or application involved  
 
 Example:
 
-```text id="x7m1pr"
-User: John Smith
+```text
+User: j.smith
+Host: FIN-LAPTOP-22
 Department: Finance
-Manager: Sarah Johnson
-Start Date: Monday
 ```
 
 ---
 
-## Requested Access / Service
+## Description
 
-Document:
+This section explains:
 
-* AD account creation
-* Security group assignment
-* VPN access
-* Citrix access
-* Shared mailbox permissions
-* Printer mapping
-* Software installation
-* Device provisioning
-
-Access should follow least privilege.
-
----
-
-## Approval Verification
-
-Document:
-
-* Manager approval
-* HR onboarding approval
-* Security approval if privileged access required
-
-Never provision access without documented approval.
-
----
-
-## Work Performed
-
-Document:
-
-* Account created
-* Groups assigned
-* Password issued securely
-* Licensing completed
-* Device prepared
-* Validation completed
+- What happened  
+- When it happened  
+- How it was detected  
+- Business impact  
+- Why it matters from a security standpoint  
 
 Example:
 
-```text id="m9q4vd"
-Created AD account for j.smith in Finance OU.
+```text
+Wazuh alert triggered for repeated failed VPN login attempts from an unknown external source targeting user j.smith.
 
-Assigned Finance_RW security group, VPN access group, Microsoft 365 license, and Citrix application access.
+User reported being unable to access Outlook and VPN services.
 
-Temporary password issued securely with required password change at first login.
+Potential credential lockout or suspicious authentication activity under investigation.
+```
+
+---
+
+## Investigation Notes
+
+This is usually where I document:
+
+- Validation steps  
+- Log review findings  
+- SIEM activity  
+- User verification  
+- Actions taken  
+- Escalation decisions  
+
+Example:
+
+```text
+Reviewed Wazuh authentication logs and identified 14 failed login attempts from unfamiliar external source IP.
+
+Verified user location and confirmed the user was not attempting access during the alert timeframe.
+
+Reset password, unlocked account, and escalated source IP activity to Security team for further review.
 ```
 
 ---
 
 ## Resolution
 
-Document final completion.
+This section explains the final outcome.
 
 Example:
 
-```text id="d5y2lx"
-Manager notified of completed onboarding.
-User confirmed successful first login and access to required systems.
+```text
+Password reset completed, account unlocked, and MFA revalidation performed.
 
-Request completed successfully.
+Security team reviewed source activity and confirmed failed external access attempts with no successful compromise identified.
+
+Incident resolved and monitoring continued.
 ```
+
+---
+
+## Closure Notes
+
+Before closing the ticket, I usually include:
+
+- User confirmation  
+- Manager notification if needed  
+- Preventive recommendations  
+- Lessons learned if applicable  
+
+Helps keep the incident fully documented for future review.
 
 ---
 
 # Example Full Ticket Summary
 
-```text id="r8v6kt"
-Priority: Medium
+```text
+Priority: High
 
 Summary:
-New employee onboarding for Finance department
-
-Requestor:
-Finance Manager
+Repeated failed VPN login attempts for Finance user
 
 Affected User:
-John Smith
+j.smith
 
-Services Requested:
-AD account creation
-VPN access
-Citrix access
-Microsoft 365 provisioning
+Description:
+User account locked after repeated failed login attempts detected through Wazuh alerting.
 
-Work Completed:
-Account created
-Groups assigned
-Password issued securely
-Access validated
+Investigation:
+Confirmed failed external login attempts from unknown IP source.
+Password reset completed.
+Account unlocked.
+MFA verified.
+
+Resolution:
+No successful compromise identified.
+Access restored.
+Security monitoring continued.
 
 Status:
 Resolved
@@ -199,23 +209,22 @@ Resolved
 
 # Security Notes
 
-Never:
+A few things I try to avoid:
 
-* Create accounts without approval
-* Overprovision access
-* Reuse old user accounts
-* Skip documentation for onboarding
+- Closing incidents too quickly  
+- Ignoring repeated failed login activity  
+- Skipping documentation during investigations  
+- Leaving privilege escalation concerns unresolved  
 
-Service requests often become audit evidence.
+Good ticket documentation is part of good security operations.
 
 ---
 
 # Related Procedures
 
-* New User Creation
-* Group Membership Management
-* Computer Account Management
-* Password Reset Procedure
-* Citrix Workspace Access Setup
-
----
+- Password Reset Procedure  
+- Account Lockout Resolution  
+- Suspicious Login Investigation  
+- Phishing Escalation  
+- Wazuh Alert Triage  
+- VPN Authentication Troubleshooting
