@@ -1,190 +1,175 @@
-# Active Directory Account Lockout Resolution
+# Active Directory Password Reset Procedure
 
 ## Objective
 
-Provide a standardized process for identifying, troubleshooting, and resolving user account lockouts in Active Directory while maintaining security controls and minimizing business disruption.
+This is a standard process I’d typically follow when helping a user regain access to their account in Active Directory.
 
-This procedure supports common Service Desk scenarios involving:
+Most password reset tickets usually involve:
 
-* Repeated failed login attempts
-* Forgotten passwords
-* Cached credential failures
-* VPN authentication failures
-* Citrix Workspace login loops
-* Outlook and Microsoft 365 authentication issues
-* Remote Desktop login failures
+- Forgotten passwords  
+- Locked accounts  
+- First-time logins  
+- Temporary password resets  
+- Remote users unable to authenticate  
 
----
-
-# Step 1: Verify User Identity
-
-Before making any account changes, verify the user’s identity using approved internal verification methods.
-
-Examples include:
-
-* Employee ID
-* Manager confirmation
-* Registered phone verification
-* Security verification questions
-* Existing approved service ticket
-
-Never unlock accounts without proper verification.
+The goal is to restore access quickly while still following proper security and verification procedures.
 
 ---
 
-# Step 2: Confirm Lockout Symptoms
+# Step 1: Verify the User First
 
-Common user reports include:
+Before resetting anything, always verify the user’s identity.
 
-* “My password is correct but I still can’t log in”
-* “My account says it is locked”
-* “VPN keeps rejecting my login”
-* “Citrix keeps looping back to login”
-* “Outlook keeps asking for my password”
+Depending on the environment, this could include:
 
-Determine whether this is a true lockout or a password mismatch.
+- Employee ID  
+- Manager confirmation  
+- Call-back verification  
+- MFA confirmation  
+- Existing support ticket approval  
+
+Even for something as simple as a password reset, it’s important not to skip verification steps.
 
 ---
 
-# Step 3: Open Active Directory Users and Computers
+# Step 2: Open Active Directory Users and Computers
 
-Launch:
+Usually I’ll open:
 
-```text id="q4dsp7"
-Active Directory Users and Computers (ADUC)
-```
-
-Or run:
-
-```powershell id="8fpvsa"
+```powershell
 dsa.msc
 ```
 
-Locate the affected user account.
+Or navigate through:
+
+```text
+Start Menu → Administrative Tools → Active Directory Users and Computers
+```
 
 ---
 
-# Step 4: Check Account Status
+# Step 3: Find the User Account
 
-Right-click the user account:
+Search using:
 
-```text id="v1jksm"
-Properties → Account
+- Username  
+- Full name  
+- Employee ID  
+- Email address (depending on naming standards)
+
+Before making changes, I usually double-check:
+
+- Correct department  
+- Correct OU  
+- Account status  
+- Whether the account is disabled or locked out  
+
+Easy mistake to make in larger environments if names are similar.
+
+---
+
+# Step 4: Reset the Password
+
+Right-click the account → **Reset Password**
+
+Normally I’ll:
+
+- Set a temporary password  
+- Require the user to change it at next login  
+
+Typical settings:
+
+```text
+☑ User must change password at next logon
+☐ User cannot change password
+☐ Password never expires
 ```
 
-Look for:
+I usually avoid touching additional security settings unless there’s a specific reason or approval.
 
-```text id="9x8zmd"
-Account is locked out
-```
+---
 
-If enabled:
+# Step 5: Unlock the Account (If Needed)
 
-```text id="zhqj0e"
+A lot of tickets are actually lockout issues instead of forgotten passwords.
+
+If the account shows locked:
+
+```text
 ☑ Unlock account
 ```
 
-Do not unlock repeatedly without identifying the source of the failed logins.
+This usually happens after too many failed login attempts, old cached credentials, or expired passwords on mobile devices.
 
 ---
 
-# Step 5: Investigate Root Cause
+# Step 6: If Login Still Fails
 
-Common causes include:
+Sometimes resetting the password doesn’t fully resolve the issue.
 
-* Incorrect saved passwords on workstation
-* Mobile device mail app using old credentials
-* VPN client cached credentials
-* Citrix Workspace saved sessions
-* RDP disconnected sessions
-* Mapped drives using old passwords
-* Service accounts using expired credentials
-* Password recently changed on one device only
+At that point I’d start checking things like:
 
-Repeated lockouts usually indicate a credential caching issue.
+- VPN connectivity  
+- MFA prompts  
+- Cached credentials  
+- Citrix Workspace sessions  
+- RDP session locks  
+- DNS/domain communication issues  
+- Whether the device is still talking to the domain properly  
 
----
-
-# Step 6: Reset Password if Needed
-
-If the user does not know the correct password or repeated failures continue:
-
-Perform a password reset and require:
-
-```text id="e0jx9t"
-☑ User must change password at next logon
-```
-
-Then clear all saved credentials on affected systems.
+A lot of “password issues” end up being authentication or connectivity problems instead.
 
 ---
 
-# Step 7: Validate Access
+# Step 7: Document Everything
 
-Confirm successful login to:
+For ticket notes, I try to keep documentation short but clear.
 
-* Windows workstation
-* VPN
-* Citrix Workspace
-* Outlook / Microsoft 365
-* Remote Desktop session
-* Required business applications
+Usually including:
 
-Ensure the issue is fully resolved before closing the ticket.
+- User verification completed  
+- Password reset performed  
+- Account unlocked  
+- Temporary password delivered securely  
+- Additional troubleshooting steps  
+- Confirmation user regained access  
 
----
-
-# Step 8: Document the Ticket
-
-Record:
-
-* Identity verification completed
-* Account unlock performed
-* Password reset performed (if applicable)
-* Root cause identified
-* Cached credentials cleared
-* Successful login confirmed
-* Final resolution status
-
-Proper documentation supports compliance and recurring issue tracking.
+Good documentation helps both the next technician and audit/security reviews later.
 
 ---
 
 # Example Ticket Note
 
-```text id="7y1cwr"
-User identity verified via registered phone confirmation.
+```text
+Verified user identity through manager approval and employee verification.
 
-AD account found locked due to repeated failed VPN login attempts.
-Unlocked account and identified cached credentials in Citrix Workspace.
+Reset Active Directory password and required password change at next login.
+Unlocked account after multiple failed login attempts.
 
-Password reset performed and user required to change password at next login.
-
-Confirmed successful access to VPN and Outlook.
-Issue resolved and ticket closed.
+User confirmed successful login after password update.
+Issue resolved.
 ```
 
 ---
 
 # Security Notes
 
-Never:
+A few things I always avoid:
 
-* Unlock accounts without verification
-* Ignore repeated lockout patterns
-* Disable lockout policies without approval
-* Share passwords insecurely
+- Sending passwords through unsecured email  
+- Skipping identity verification  
+- Disabling password policies unnecessarily  
+- Sharing credentials with unauthorized users  
 
-Always investigate the cause, not just the symptom.
-
----
-
-# Related Procedures
-
-* Password Reset Procedure
-* MFA Troubleshooting
-* Citrix Workspace Login Issues
-* VPN Access Support
-* Suspicious Login Investigation
+Even simple Service Desk tickets still fall under security responsibility.
 
 ---
+
+# Related Issues Often Connected
+
+- MFA problems  
+- VPN login failures  
+- Citrix login issues  
+- Account lockouts  
+- Remote user authentication issues  
+- Password sync problems in hybrid environments
