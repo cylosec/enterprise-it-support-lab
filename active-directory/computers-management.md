@@ -2,236 +2,215 @@
 
 ## Objective
 
-Provide a standardized process for managing computer accounts in Active Directory to support endpoint lifecycle management, domain security, and enterprise workstation administration.
+This is the standard process I’d typically follow when managing computer accounts in Active Directory.
 
-This procedure supports:
+Most of these tickets usually involve:
 
-* New workstation deployment
-* Domain joining systems
-* Moving computers to correct Organizational Units (OUs)
-* Disabling stale computer accounts
-* Re-enabling disabled devices
-* Removing retired endpoints
-* Troubleshooting trust relationship failures
-* Device replacement workflows
+- New workstation deployments  
+- Domain joins  
+- Reimaged systems  
+- Replacing old devices  
+- OU cleanup  
+- Trust relationship failures  
+- Retired or stale endpoints  
 
-Proper computer account management improves security, policy enforcement, and support efficiency.
+Proper computer account management helps keep policies organized, improves security, and avoids a lot of weird login or Group Policy issues later.
 
 ---
 
-# Step 1: Verify Request and Asset Information
+# Step 1: Verify the Request and Device Information
 
-Before making changes, confirm:
+Before making changes, I usually confirm:
 
-* Approved deployment or decommission request
-* Device hostname
-* Assigned user
-* Department
-* Asset tag or inventory ID
-* Device type (desktop, laptop, server, VM)
-* Replacement or retirement status
-* Manager or department approval if required
+- Device hostname  
+- Assigned user  
+- Department  
+- Asset tag or inventory number  
+- Whether it’s a replacement or brand-new system  
+- Approval from management if required  
 
-Never remove or disable endpoints without verification.
+Especially when disabling or deleting systems, I never want to touch the wrong endpoint.
 
 ---
 
 # Step 2: Open Active Directory Users and Computers
 
-Launch:
+Usually I’ll launch ADUC using:
 
-```text id="w2h7pn"
-Active Directory Users and Computers (ADUC)
-```
-
-Or run:
-
-```powershell id="n3x8lk"
+```powershell
 dsa.msc
 ```
 
-Locate the computer account.
+Then locate the computer object.
 
-Computer objects are often stored in:
+Depending on the environment, computer accounts might be stored in:
 
-```text id="f6y1ma"
+```text
 Computers
 Workstations
 Servers
 Department-specific OUs
 ```
 
-depending on organizational structure.
+Some environments are organized really well… others definitely are not.
 
 ---
 
-# Step 3: Verify Computer Account Status
+# Step 3: Verify the Computer Account
 
-Check:
+Before changing anything, I usually check:
 
-* Correct hostname
-* Correct OU placement
-* Enabled or disabled state
-* Last known login activity
-* Assigned policies via OU
-* Duplicate or stale accounts
+- Correct hostname  
+- Correct OU placement  
+- Whether the account is enabled or disabled  
+- Last login activity  
+- Group Policy placement  
+- Duplicate or stale computer accounts  
 
-Incorrect OU placement often causes Group Policy and login issues.
+Incorrect OU placement causes a surprising amount of problems with policies, printers, scripts, and login behavior.
 
 ---
 
-# Step 4: Move Computer to Correct OU
+# Step 4: Move the Computer to the Correct OU
 
 If needed:
 
-Right-click the computer:
+Right-click the computer → **Move**
 
-```text id="a8z4tr"
-Move…
-```
+Then place the system into the correct OU based on:
 
-Place the device into the correct OU based on:
+- Department  
+- Device type  
+- Security requirements  
+- Remote access permissions  
+- Administrative policy structure  
 
-* Department
-* Device type
-* Security policy requirements
-* Remote access rules
-* Administrative controls
-
-OU placement determines policy enforcement and access controls.
+OU structure matters more than people realize since it controls policy inheritance and access management.
 
 ---
 
-# Step 5: Disable Stale or Retired Devices
+# Step 5: Disable Old or Stale Devices
 
-For decommissioned systems:
+For retired or replaced systems:
 
-Right-click:
+Right-click → **Disable Account**
 
-```text id="p7m1ds"
-Disable Account
-```
-
-This prevents unauthorized domain access while preserving audit history.
+I usually disable systems first instead of deleting them immediately.
 
 Common reasons:
 
-* Employee termination
-* Device replacement
-* Hardware retirement
-* Lost or stolen equipment
+- Device replacement  
+- Employee termination  
+- Lost or stolen equipment  
+- Hardware retirement  
+- Old test systems  
 
-Avoid immediate deletion unless policy requires it.
+This keeps audit history intact while preventing domain access.
 
 ---
 
 # Step 6: Re-enable Existing Devices
 
-For returning or reimaged systems:
+If a device was reimaged or brought back into service:
 
-```text id="c5j9vk"
-Enable Account
-```
+Right-click → **Enable Account**
 
-Verify:
+Before re-enabling, I normally verify:
 
-* Device ownership
-* Security compliance
-* Correct OU placement
-* Updated hostname if needed
+- Device ownership  
+- Security compliance  
+- Correct OU placement  
+- Updated hostname if applicable  
 
-Re-enable only after validation.
+Good habit to validate everything before putting it back into production.
 
 ---
 
-# Step 7: Remove Old Computer Accounts
+# Step 7: Delete Old Computer Accounts
 
-Only after policy approval:
+Only after approval and retention policy checks.
 
-```text id="e4x2rq"
-Delete
-```
+Right-click → **Delete**
 
-Usually performed after:
+Usually this happens after:
 
-* Confirmed retirement
-* Backup verification
-* Replacement completed
-* Retention period satisfied
+- Retirement is confirmed  
+- Replacement deployment is completed  
+- Backups are verified  
+- Retention requirements are satisfied  
 
-Deletion should follow asset lifecycle policy.
+Deleting objects too early can create unnecessary headaches later.
 
 ---
 
 # Step 8: Troubleshoot Trust Relationship Failures
 
-Common user report:
+One of the more common workstation issues:
 
-```text id="g9r5wb"
-The trust relationship between this workstation and the primary domain failed
+```text
+"The trust relationship between this workstation and the primary domain failed"
 ```
 
-Common resolution steps:
+Typical troubleshooting steps:
 
-* Remove system from domain
-* Rejoin domain
-* Reset computer account
-* Confirm DNS resolution
-* Validate domain controller connectivity
+- Remove the computer from the domain  
+- Rejoin the domain  
+- Reset the computer account  
+- Verify DNS resolution  
+- Confirm domain controller communication  
 
-This is a frequent Service Desk escalation scenario.
+This comes up pretty often after reimaging systems, snapshot restores, or long offline periods.
 
 ---
 
 # Step 9: Document the Ticket
 
-Record:
+For documentation, I usually include:
 
-* Device verified
-* OU changes performed
-* Disable/enable/delete action completed
-* Domain rejoin completed if required
-* Validation successful
-* Final resolution status
+- Device verified  
+- OU changes completed  
+- Account disabled/enabled/deleted  
+- Domain rejoin completed if necessary  
+- Validation successful  
+- User confirmed access  
 
-Proper documentation supports audits and asset tracking.
+Clear documentation helps both IT operations and future troubleshooting.
 
 ---
 
 # Example Ticket Note
 
-```text id="t8v3yx"
+```text
 Verified replacement request for retired Finance workstation FIN-PC-104.
 
-Disabled old computer account and moved replacement device to Finance Workstations OU.
+Disabled old computer account and moved replacement workstation into the Finance Workstations OU.
 
-Confirmed successful domain join, Group Policy application, and user login.
+Confirmed successful domain join, Group Policy update, and user login verification.
 
-Asset transition completed and ticket closed.
+Asset transition completed successfully.
 ```
 
 ---
 
 # Security Notes
 
-Never:
+A few things I try to avoid:
 
-* Delete devices without approval
-* Leave stale endpoints active indefinitely
-* Ignore trust relationship failures
-* Place systems in incorrect OUs
-* Re-enable devices without validation
+- Deleting systems too quickly  
+- Leaving stale endpoints active indefinitely  
+- Ignoring trust relationship errors  
+- Placing devices into incorrect OUs  
+- Re-enabling systems without validation  
 
-Computer accounts are part of identity security.
+Computer accounts are still part of identity and access security.
 
 ---
 
 # Related Procedures
 
-* Domain Join Troubleshooting
-* New User Creation
-* Group Membership Management
-* RDP Troubleshooting
-* DNS Troubleshooting
-
----
+- Domain Join Troubleshooting  
+- DNS Troubleshooting  
+- Group Policy Troubleshooting  
+- RDP Access Issues  
+- User Provisioning  
+- Endpoint Replacement Procedures
