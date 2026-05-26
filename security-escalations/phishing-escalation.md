@@ -2,171 +2,176 @@
 
 ## Objective
 
-Provide a standardized process for identifying, documenting, and escalating suspected phishing emails in enterprise environments.
+This is the standard process I’d typically follow when handling suspected phishing emails in an enterprise environment.
 
-This procedure supports:
+Most phishing-related tickets usually involve:
 
-* User-reported phishing emails
-* Credential harvesting attempts
-* Fake MFA requests
-* Business email compromise attempts
-* Malicious attachment delivery
-* Fake invoice/payment scams
-* Internal spoofing attempts
-* Executive impersonation attacks
+- Suspicious email reports  
+- Fake Microsoft 365 login pages  
+- Credential harvesting attempts  
+- Fake MFA prompts  
+- Malicious attachments  
+- Executive impersonation  
+- Fake invoice/payment scams  
+- Internal spoofing attempts  
 
-Fast response reduces the risk of credential theft and malware execution.
+The biggest priority is reducing the risk of credential theft, malware execution, or unauthorized access as quickly as possible.
 
 ---
 
-# Step 1: Identify the Report
+# Step 1: Identify the User Report
 
-Common user reports include:
+Most users usually report things like:
 
-* “This email looks suspicious”
-* “I clicked a strange link”
-* “I opened an attachment by mistake”
-* “I received a fake invoice”
-* “My manager asked me to buy gift cards”
-* “I received an MFA prompt I didn’t initiate”
+- “This email looks suspicious”  
+- “I clicked a weird link”  
+- “I opened the attachment already”  
+- “I got a fake invoice”  
+- “My manager emailed me asking for gift cards”  
+- “I received an MFA prompt I didn’t approve”  
 
-Treat all reports seriously until verified.
+I try to treat every phishing report seriously until proven otherwise.
 
 ---
 
 # Step 2: Instruct the User Immediately
 
-Tell the user:
+First thing I normally tell the user:
 
-* Do not click additional links
-* Do not open attachments
-* Do not reply to the sender
-* Do not forward externally
-* Leave the message intact for review
+- Don’t click anything else  
+- Don’t open additional attachments  
+- Don’t reply to the sender  
+- Don’t forward the message externally  
+- Leave the email intact for investigation  
 
-If they already clicked:
+If they already interacted with the email, I’ll try to determine:
 
-* Determine what action occurred
-* Whether credentials were entered
-* Whether files were downloaded
-* Whether MFA prompts were approved
+- Whether they clicked a link  
+- Entered credentials  
+- Downloaded files  
+- Approved MFA prompts  
+- Executed attachments  
 
-This changes the severity immediately.
+That changes the severity level immediately.
 
 ---
 
 # Step 3: Review the Email Indicators
 
-Check:
+Next I’ll review common phishing indicators like:
 
-* Sender address
-* Reply-to mismatch
-* Domain spoofing
-* Suspicious URLs
-* Unexpected attachments
-* Urgent payment requests
-* Credential prompts
-* Fake Microsoft 365 login pages
+- Sender address  
+- Reply-to mismatch  
+- Spoofed domains  
+- Suspicious URLs  
+- Unexpected attachments  
+- Urgent payment requests  
+- Fake login prompts  
+- Microsoft 365 impersonation attempts  
 
-Examples:
+A lot of phishing emails rely heavily on urgency, fear, or impersonation.
 
-* Slight misspellings
-* Display name spoofing
-* Internal impersonation
+Common examples:
 
-Many phishing attempts rely on urgency and trust.
+- Slightly misspelled domains  
+- Fake display names  
+- Internal impersonation  
+- “Password Expiring” emails  
+- Fake DocuSign or invoice notifications  
 
 ---
 
 # Step 4: Determine Severity
 
-Higher severity includes:
+Higher severity situations usually include:
 
-* User entered credentials
-* Attachment executed
-* Privileged user targeted
-* Finance or executive impersonation
-* MFA approval clicked
-* Multiple users received same email
-* Known malware indicators present
+- User entered credentials  
+- Attachment was executed  
+- MFA approval was accepted  
+- Privileged account targeted  
+- Executive impersonation  
+- Multiple users received the same message  
+- Malware indicators identified  
 
-Higher severity requires immediate escalation.
+At that point, I’d treat it more like a security incident than a normal help desk ticket.
 
 ---
 
 # Step 5: Immediate Containment Actions
 
-If user interacted:
+If the user interacted with the phishing attempt, I’d usually move quickly to containment.
 
-* Reset password immediately
-* Force MFA revalidation
-* Disable account temporarily if required
-* Revoke active sessions if available
-* Notify Security Team
-* Preserve email headers and logs
+Typical actions:
 
-Containment should happen before full analysis if compromise risk exists.
+- Reset password immediately  
+- Force MFA revalidation  
+- Disable account temporarily if needed  
+- Revoke active sessions if available  
+- Notify Security Team  
+- Preserve logs and email headers  
+
+Containment is usually more important than full investigation in the first few minutes.
 
 ---
 
 # Step 6: Escalate to Security
 
-Escalate for:
+I’d escalate immediately for situations involving:
 
-* Credential exposure
-* Malware execution
-* Executive impersonation
-* Privileged account targeting
-* Widespread delivery across organization
-* Suspicious attachment execution
+- Credential exposure  
+- Malware execution  
+- Executive impersonation  
+- Privileged account targeting  
+- Widespread phishing campaigns  
+- Suspicious attachments being opened  
 
-Help Desk should not independently close high-risk phishing incidents.
+High-risk phishing incidents shouldn’t be handled entirely at the Help Desk level.
 
 ---
 
 # Step 7: Confirm Recovery
 
-Verify:
+Before resolving the incident, I usually verify:
 
-* Password reset completed
-* MFA secure
-* User access restored safely
-* Security review completed
-* Additional monitoring enabled if required
+- Password reset completed  
+- MFA secured  
+- User access restored safely  
+- Security review completed  
+- Monitoring enabled if necessary  
 
-The goal is secure recovery, not just ticket closure.
+The goal is secure recovery, not just quickly closing the ticket.
 
 ---
 
 # Step 8: Document the Ticket
 
-Record:
+For documentation, I usually include:
 
-* Original report details
-* Email indicators observed
-* User actions taken
-* Containment steps
-* Escalation path
-* Final resolution status
+- Original user report  
+- Phishing indicators observed  
+- User actions taken  
+- Containment actions performed  
+- Escalation path  
+- Final resolution status  
 
-This documentation is often used during incident review.
+Good documentation becomes important during security reviews and post-incident analysis.
 
 ---
 
 # Example Ticket Note
 
-```text id="k6p3zm"
+```text
 User reported suspicious Microsoft 365 password expiration email.
 
-Review confirmed spoofed sender domain and credential harvesting link.
-User clicked link but did not enter credentials.
+Review identified spoofed sender domain and credential harvesting link.
+User clicked the link but did not enter credentials.
 
 Password reset completed as precaution and MFA revalidation enforced.
 
 Email escalated to Security Team for header analysis and organization-wide review.
 
 No confirmed compromise identified.
-Incident resolved.
+Incident resolved successfully.
 ```
 
 ---
@@ -177,26 +182,36 @@ Incident resolved.
 
 “How would you handle a phishing report?”
 
-## Strong Answer
+## My Answer
 
-```text id="m2w8ty"
-I would first determine whether the user clicked the link, opened an attachment, or entered credentials because that drives severity.
+```text
+I’d first determine whether the user clicked the link, opened an attachment, entered credentials, or approved MFA prompts because that immediately affects severity.
 
-I would review sender details, domain mismatches, suspicious links, and attachment behavior.
+Then I’d review sender information, domain mismatches, suspicious URLs, and attachment behavior.
 
-If there is any risk of credential exposure or malware execution, I would immediately secure the account, preserve evidence, and escalate to Security rather than treating it as a normal help desk ticket.
+If there’s any indication of credential exposure or malware execution, I’d secure the account immediately, preserve evidence, and escalate to Security rather than treating it like a standard Help Desk ticket.
 ```
 
-This answer performs very well in interviews.
+---
+
+# Security Notes
+
+A few things I try to avoid:
+
+- Dismissing phishing reports too quickly  
+- Delaying password resets after credential exposure  
+- Allowing suspicious sessions to remain active  
+- Closing incidents without escalation when compromise risk exists  
+
+Phishing incidents can escalate very quickly if not handled properly.
 
 ---
 
 # Related Procedures
 
-* Incident Response Ticket Template
-* Password Reset Procedure
-* Suspicious Login Investigation
-* Wazuh Alert Triage
-* Privileged Access Review
-
----
+- Incident Response Ticket Template  
+- Password Reset Procedure  
+- Suspicious Login Investigation  
+- Wazuh Alert Triage  
+- MFA Troubleshooting  
+- Privileged Access Review
