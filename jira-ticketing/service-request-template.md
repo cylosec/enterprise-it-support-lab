@@ -1,37 +1,39 @@
-# Incident Response Ticket Template
+# Service Request Ticket Template
 
 ## Objective
 
-This is the standard format I’d typically use when documenting security incidents, escalations, or suspicious activity inside Jira Service Management or similar ticketing platforms.
+This is the standard format I’d typically use when documenting routine IT support requests inside Jira Service Management or similar ticketing systems.
 
-Most of these tickets usually involve:
+Most of these requests usually involve:
 
-- Suspicious login attempts  
-- Phishing reports  
-- Malware alerts  
-- Account lockouts  
-- Unauthorized access attempts  
-- VPN authentication failures  
-- Endpoint security alerts  
-- Wazuh SIEM escalations  
+- Password resets  
+- New user onboarding  
+- Access requests  
+- VPN setup  
+- Citrix access  
+- Printer setup  
+- Software installation  
+- Hardware provisioning  
+- Group membership updates  
 
-Good documentation helps speed up investigations, improves escalation quality, and keeps everything organized for audit and security review purposes.
+Good documentation helps keep support organized, improves accountability, and makes audits a lot easier later.
 
 ---
 
 # Ticket Type
 
-## Incident
+## Service Request
 
-I’d usually use an Incident ticket for:
+I’d normally use a Service Request ticket for:
 
-- Security events  
-- Service disruptions  
-- Access anomalies  
-- Potential policy violations  
-- Urgent operational issues  
+- Standard user support  
+- Planned onboarding tasks  
+- Permission changes  
+- Equipment requests  
+- Access provisioning  
+- Operational support tasks  
 
-These types of tickets normally require investigation, ownership, and proper resolution tracking.
+Unlike incidents, service requests are usually focused on delivery and fulfillment rather than troubleshooting outages or security events.
 
 ---
 
@@ -39,12 +41,12 @@ These types of tickets normally require investigation, ownership, and proper res
 
 ## Summary
 
-Keep it short and clear.
+Keep the request short and easy to understand.
 
 Example:
 
 ```text
-Multiple failed login attempts detected for Finance user account
+New Finance employee onboarding and access provisioning
 ```
 
 ---
@@ -56,150 +58,146 @@ Typical priorities:
 - Low  
 - Medium  
 - High  
-- Critical  
 
-I usually base priority on:
+I usually base this on:
 
-- Business impact  
-- Security risk  
-- User impact  
-- Potential exposure  
+- Business urgency  
+- Employee start date  
+- Operational impact  
+- Access dependency requirements  
 
 ---
 
-## Reporter
+## Requestor
 
-Who submitted or generated the alert.
+Who submitted the request.
 
 Examples:
 
-- End user  
-- SOC Analyst  
-- Automated SIEM alert  
-- Security Team  
 - Manager  
+- HR representative  
+- Department supervisor  
+- End user  
 
 ---
 
-## Affected User / Asset
+## Affected User
 
 I normally document:
 
+- Full name  
 - Username  
-- Hostname  
 - Department  
-- Device name  
-- IP address (sanitized if needed)  
-- Server or application involved  
+- Assigned manager  
+- Start date  
+- Assigned device if applicable  
 
 Example:
 
 ```text
-User: j.smith
-Host: FIN-LAPTOP-22
+User: John Smith
 Department: Finance
+Manager: Sarah Johnson
+Start Date: Monday
 ```
 
 ---
 
-## Description
+## Requested Access / Services
 
-This section explains:
+This section usually includes:
 
-- What happened  
-- When it happened  
-- How it was detected  
-- Business impact  
-- Why it matters from a security standpoint  
+- AD account creation  
+- Security group assignments  
+- VPN access  
+- Citrix access  
+- Shared mailbox permissions  
+- Printer mapping  
+- Software installation  
+- Device setup and provisioning  
+
+I try to follow least privilege whenever possible instead of granting broad access unnecessarily.
+
+---
+
+# Approval Verification
+
+Before provisioning anything, I usually verify:
+
+- Manager approval  
+- HR onboarding approval  
+- Security approval if elevated access is requested  
+
+I never want to provision access without documentation attached to the request.
+
+---
+
+# Work Performed
+
+This is where I document the actual work completed.
+
+Typical examples:
+
+- Account created  
+- Groups assigned  
+- Password delivered securely  
+- Licensing completed  
+- Device configured  
+- Validation completed  
 
 Example:
 
 ```text
-Wazuh alert triggered for repeated failed VPN login attempts from an unknown external source targeting user j.smith.
+Created Active Directory account for j.smith in Finance OU.
 
-User reported being unable to access Outlook and VPN services.
+Assigned Finance_RW security group, VPN access group, Microsoft 365 license, and Citrix application access.
 
-Potential credential lockout or suspicious authentication activity under investigation.
+Temporary password delivered securely with required password change at first login.
 ```
 
 ---
 
-## Investigation Notes
+# Resolution
 
-This is usually where I document:
-
-- Validation steps  
-- Log review findings  
-- SIEM activity  
-- User verification  
-- Actions taken  
-- Escalation decisions  
+Document the final outcome clearly.
 
 Example:
 
 ```text
-Reviewed Wazuh authentication logs and identified 14 failed login attempts from unfamiliar external source IP.
+Manager notified of completed onboarding.
 
-Verified user location and confirmed the user was not attempting access during the alert timeframe.
+User confirmed successful first login and access to required systems.
 
-Reset password, unlocked account, and escalated source IP activity to Security team for further review.
+Request completed successfully.
 ```
-
----
-
-## Resolution
-
-This section explains the final outcome.
-
-Example:
-
-```text
-Password reset completed, account unlocked, and MFA revalidation performed.
-
-Security team reviewed source activity and confirmed failed external access attempts with no successful compromise identified.
-
-Incident resolved and monitoring continued.
-```
-
----
-
-## Closure Notes
-
-Before closing the ticket, I usually include:
-
-- User confirmation  
-- Manager notification if needed  
-- Preventive recommendations  
-- Lessons learned if applicable  
-
-Helps keep the incident fully documented for future review.
 
 ---
 
 # Example Full Ticket Summary
 
 ```text
-Priority: High
+Priority: Medium
 
 Summary:
-Repeated failed VPN login attempts for Finance user
+New employee onboarding for Finance department
+
+Requestor:
+Finance Manager
 
 Affected User:
-j.smith
+John Smith
 
-Description:
-User account locked after repeated failed login attempts detected through Wazuh alerting.
+Services Requested:
+AD account creation
+VPN access
+Citrix access
+Microsoft 365 provisioning
 
-Investigation:
-Confirmed failed external login attempts from unknown IP source.
-Password reset completed.
-Account unlocked.
-MFA verified.
-
-Resolution:
-No successful compromise identified.
-Access restored.
-Security monitoring continued.
+Work Completed:
+Account created
+Groups assigned
+Password issued securely
+Access validated
 
 Status:
 Resolved
@@ -211,20 +209,20 @@ Resolved
 
 A few things I try to avoid:
 
-- Closing incidents too quickly  
-- Ignoring repeated failed login activity  
-- Skipping documentation during investigations  
-- Leaving privilege escalation concerns unresolved  
+- Creating accounts without approval  
+- Overprovisioning permissions  
+- Reusing old employee accounts  
+- Skipping documentation during onboarding  
 
-Good ticket documentation is part of good security operations.
+Service requests often become part of audit and compliance evidence later.
 
 ---
 
 # Related Procedures
 
+- New User Creation  
+- Group Membership Management  
+- Computer Account Management  
 - Password Reset Procedure  
-- Account Lockout Resolution  
-- Suspicious Login Investigation  
-- Phishing Escalation  
-- Wazuh Alert Triage  
-- VPN Authentication Troubleshooting
+- VPN Access Support  
+- Citrix Workspace Access Setup
