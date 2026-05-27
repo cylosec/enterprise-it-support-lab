@@ -2,256 +2,291 @@
 
 ## Objective
 
-Provide a standardized process for diagnosing and resolving Remote Desktop Protocol (RDP) connectivity issues in enterprise Windows environments.
+This is the standard process I’d typically follow when troubleshooting Remote Desktop Protocol (RDP) issues in an enterprise Windows environment.
 
-This procedure supports:
+Most RDP-related tickets usually involve:
 
-* Remote server administration
-* User remote access failures
-* Administrative workstation access
-* VPN + RDP connection workflows
-* Authentication failures
-* Session lockouts
-* Hostname resolution failures
-* Firewall and port connectivity issues
+- Remote server access failures  
+- VPN + RDP connectivity problems  
+- Authentication issues  
+- Hostname resolution failures  
+- Firewall or port blocking  
+- Session lockouts  
+- Permission problems  
+- Administrative remote access issues  
 
-RDP is a critical support function for Service Desk, Systems Administration, and Infrastructure Support.
+RDP is one of the most important tools for IT support and systems administration, so when it breaks, users usually notice immediately.
 
 ---
 
 # Step 1: Identify the Issue
 
-Common user reports include:
+Most users usually report things like:
 
-* “Remote Desktop won’t connect”
-* “The remote computer cannot be found”
-* “Access is denied”
-* “Your credentials did not work”
-* “I can ping the server but RDP fails”
-* “Session is stuck or disconnected”
-* “Connection times out”
+- “Remote Desktop won’t connect”  
+- “The remote computer can’t be found”  
+- “My credentials don’t work”  
+- “Access is denied”  
+- “I can ping the server but RDP still fails”  
+- “The session froze”  
+- “The connection times out”  
 
-Determine whether the issue is:
+First thing I try to determine is whether the issue is:
 
-* Network related
-* Authentication related
-* DNS related
-* Firewall related
-* Session related
-* Permission related
+- Network-related  
+- DNS-related  
+- Authentication-related  
+- Firewall-related  
+- Session-related  
+- Permissions-related  
+
+That usually narrows troubleshooting down pretty quickly.
 
 ---
 
 # Step 2: Verify Basic Connectivity
 
-Run:
+I’ll normally start with simple connectivity testing.
 
-```powershell id="w4n8zp"
+```powershell
 ping hostname
 ping 10.x.x.x
 ```
 
 Examples:
 
-```powershell id="s9v3mr"
+```powershell
 ping DC01
 ping server01
 ```
 
-Verify:
+What I’m checking:
 
-* Host is reachable
-* No packet loss
-* Internal DNS resolves correctly
+- Host reachable  
+- Packet loss  
+- Internal DNS resolution working  
 
-If IP works but hostname fails, DNS is likely the issue.
+If pinging the IP works but the hostname fails, DNS is usually the problem.
 
 ---
 
 # Step 3: Verify DNS Resolution
 
-Run:
+Next I’ll test DNS directly.
 
-```powershell id="c7m1yt"
+```powershell
 nslookup hostname
 nslookup yourdomain.local
 ```
 
-Confirm:
+What I’m looking for:
 
-* Correct internal IP returned
-* Internal DNS responding properly
+- Correct internal IP returned  
+- Internal DNS responding properly  
+- No stale or incorrect records  
 
-Incorrect DNS frequently causes RDP failures.
+Incorrect DNS configuration causes a lot of RDP failures in Active Directory environments.
 
 ---
 
 # Step 4: Confirm Remote Desktop is Enabled
 
-On the target machine verify:
+On the target machine, I’ll verify Remote Desktop is actually enabled.
 
-```text id="d2x7kl"
+Path:
+
+```text
 System Properties → Remote → Allow remote connections to this computer
 ```
 
-Also confirm:
+I’ll also verify whether:
 
-```text id="p6j4ws"
+```text
 Allow connections only from computers running Network Level Authentication (recommended)
 ```
 
-is configured according to policy.
+is configured according to company policy.
+
+Sometimes the machine is reachable but RDP itself simply isn’t enabled.
 
 ---
 
 # Step 5: Verify User Permissions
 
-Confirm the user is:
+Next I’ll confirm the user actually has permission to connect.
 
-* Local Administrator (if required)
-* Member of Remote Desktop Users group
-* Approved for remote access
-* Not restricted by policy
+Things I usually check:
 
-Common issue:
+- Local Administrator membership if required  
+- Remote Desktop Users group membership  
+- Remote access approval  
+- Group Policy restrictions  
 
-```text id="h8v5rn"
+A common issue:
+
+```text
 Access is denied
 ```
 
-often results from missing permissions.
+usually ends up being permissions-related.
 
 ---
 
 # Step 6: Check Firewall and Port Access
 
-Verify:
+Then I’ll verify RDP traffic is allowed.
 
-* Windows Firewall allows RDP
-* TCP Port 3389 is open
-* VPN connection is active if remote access requires VPN
-* Network segmentation is not blocking access
+Things I usually check:
 
-Test:
+- Windows Firewall rules  
+- TCP Port 3389 accessibility  
+- VPN connectivity if required  
+- Network segmentation or ACL restrictions  
 
-```powershell id="y3q9db"
+Test command:
+
+```powershell
 Test-NetConnection hostname -Port 3389
 ```
 
-Successful output confirms port reachability.
+Successful output confirms the port is reachable.
 
 ---
 
 # Step 7: Review Existing Sessions
 
-Common issues include:
+Sometimes the issue is actually a stuck or disconnected session.
 
-* Frozen disconnected sessions
-* Locked administrative sessions
-* Maximum session limits reached
+Common problems include:
 
-Use:
+- Frozen disconnected sessions  
+- Locked admin sessions  
+- Session limits reached  
+- Hung RDP processes  
 
-```powershell id="u5k8lx"
+Commands I usually use:
+
+```powershell
 query user
 ```
 
 or
 
-```powershell id="g7n2pw"
+```powershell
 qwinsta
 ```
 
-to review active sessions.
-
-Reset stuck sessions if necessary.
+If needed, I’ll reset stale sessions.
 
 ---
 
 # Step 8: Validate Credentials
 
-Verify:
+Then I’ll verify authentication itself.
 
-* Correct username format
+Things I normally check:
 
-Examples:
+- Correct username format  
+- Current password  
+- Account lockout status  
+- MFA requirements  
+- VPN authentication status  
 
-```text id="n4f7zm"
+Example username formats:
+
+```text
 yourdomain\j.smith
 j.smith@yourdomain.local
 ```
 
-* Password is current
-* Account is not locked
-* MFA or VPN requirements are satisfied
-
-Password reset may be required if authentication fails.
+Sometimes a password reset or account unlock is ultimately the fix.
 
 ---
 
 # Step 9: Validate Successful Access
 
-After correction, confirm:
+After correcting the issue, I’ll usually validate actual business functionality.
 
-* User successfully logs in
-* Required applications launch
-* Shared drives available
-* Printer access works
-* Citrix access functions if required
+Things I normally confirm:
 
-Always validate business functionality, not just login.
+- User successfully logs in  
+- Applications launch correctly  
+- Shared drives map properly  
+- Printer access works  
+- Citrix access functions if required  
+
+I always try to validate the actual workflow instead of just “RDP opened.”
 
 ---
 
 # Step 10: Document the Ticket
 
-Record:
+For documentation, I usually include:
 
-* Connectivity verified
-* DNS tested
-* Firewall/port status confirmed
-* User permissions corrected
-* Session reset performed if needed
-* Final resolution status
+- Connectivity verified  
+- DNS tested  
+- Firewall and port status confirmed  
+- User permissions corrected  
+- Session reset if needed  
+- Validation completed  
+- Final resolution status  
 
-Strong documentation supports repeatability and escalation workflows.
+Good RDP documentation helps a lot with recurring infrastructure issues.
 
 ---
 
 # Example Ticket Note
 
-```text id="m1x6qr"
+```text
 User unable to RDP to Finance application server.
 
-Verified DNS resolution and confirmed successful ping to target host.
-Tested TCP 3389 connectivity and found Windows Firewall blocking inbound RDP.
+Verified successful DNS resolution and confirmed connectivity to target host.
+
+Tested TCP 3389 connectivity and identified Windows Firewall blocking inbound RDP traffic.
 
 Updated firewall rule, verified Remote Desktop Users group membership, and confirmed successful login using domain credentials.
 
-Issue resolved and ticket closed.
+Issue resolved successfully.
+```
+
+---
+
+# Example Interview Answer
+
+## Question
+
+“How do you troubleshoot RDP issues?”
+
+## My Answer
+
+```text
+I usually start by determining whether the issue is network-related, DNS-related, authentication-related, or firewall-related.
+
+I verify connectivity using ping and Test-NetConnection, confirm DNS resolution with nslookup, and check whether Remote Desktop is enabled on the target system.
+
+If needed, I review user permissions, validate credentials, reset stuck sessions, and verify TCP 3389 access before confirming successful user login.
 ```
 
 ---
 
 # Security Notes
 
-Never:
+A few things I try to avoid:
 
-* Leave RDP exposed publicly without VPN or proper controls
-* Grant remote access without approval
-* Ignore failed login patterns
-* Leave stale disconnected privileged sessions active
+- Leaving RDP publicly exposed without VPN or proper controls  
+- Granting remote access without approval  
+- Ignoring repeated failed login activity  
+- Leaving stale privileged sessions active  
 
-RDP is a high-value attack surface and must be managed carefully.
+RDP is a major attack surface and needs to be managed carefully.
 
 ---
 
 # Related Procedures
 
-* DNS Troubleshooting
-* DHCP Management
-* Password Reset Procedure
-* Account Lockout Resolution
-* Domain Join Troubleshooting
-
----
+- DNS Troubleshooting  
+- DHCP Management  
+- Password Reset Procedure  
+- Account Lockout Resolution  
+- Domain Join Troubleshooting  
+- VPN Troubleshooting
