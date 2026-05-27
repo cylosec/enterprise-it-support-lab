@@ -1,186 +1,116 @@
-# Enterprise IT Support Lab
+# DNS Troubleshooting Procedure
 
-A hands-on enterprise IT support and service desk lab built to simulate real-world Help Desk, Service Desk Analyst, and IT Support operations.
+## Objective
 
-This project demonstrates practical experience with:
+This is the standard process I’d typically follow when troubleshooting DNS-related issues in an enterprise Windows environment.
 
-* Active Directory administration
-* Windows Server 2019
-* DNS and DHCP troubleshooting
-* RDP and remote support workflows
-* Citrix Workspace troubleshooting
-* Jira ticket management
-* User provisioning and deprovisioning
-* Password resets and account lockout resolution
-* Computer account management
-* Domain join troubleshooting
-* OU placement and device lifecycle management
-* Printer troubleshooting
-* VPN and network troubleshooting
-* Security alert escalation
-* Wazuh SIEM integration for security operations
+Most DNS problems usually show up as:
 
-This lab was built to strengthen practical enterprise IT experience and support career growth into roles such as:
+- Unable to reach internal resources  
+- Domain join failures  
+- Login/authentication issues  
+- VPN connectivity problems  
+- Printer mapping failures  
+- RDP connection issues  
+- Slow network access  
+- “Server not found” errors  
 
-* Service Desk Analyst
-* Help Desk Technician
-* IT Support Specialist
-* Desktop Support Technician
-* Systems Support Analyst
-* SOC Analyst
-* Security Operations Analyst
+A lot of people think “internet issue,” but many times the real problem is DNS.
 
 ---
 
-# Lab Environment
+# Step 1: Identify the Symptoms
 
-## Infrastructure
+Common user reports usually include:
 
-### Primary Systems
+- “I can’t access internal websites”  
+- “VPN connects but nothing works”  
+- “I can ping IPs but not hostnames”  
+- “Printer disappeared”  
+- “Unable to join the domain”  
+- “Outlook won’t connect”  
+- “RDP can’t find the server”  
 
-* Windows Server 2019 Domain Controller
-* Ubuntu Server running Wazuh SIEM
-* Windows 11 endpoint workstation
-* Kali Linux VM for testing and validation
-* macOS host system with VMware Fusion
-* Lenovo ThinkCentre M70q dedicated server
-
-### Core Technologies
-
-* Active Directory
-* Group Policy
-* DNS
-* DHCP
-* Remote Desktop Protocol (RDP)
-* Citrix Workspace
-* VMware / Hyper-V
-* Jira Service Management
-* Wazuh SIEM
-* PowerShell
-* Windows Administration Tools
-
-### Standardized Public Documentation Values
-
-To maintain security best practices and avoid exposing internal infrastructure, all examples in this repository use sanitized placeholder values:
-
-* Domain: `yourdomain.local`
-* Internal DNS / Domain Controller IP: `10.x.x.x`
-* Domain Controller Hostname: `DC01`
-* Example usernames: `firstname.lastname`, `j.smith`, `svc_backup`
-
-This repository is intended for professional portfolio demonstration and follows public documentation security standards.
+One of the biggest clues is when connectivity works by IP address but fails by hostname.
 
 ---
 
-# Repository Structure
+# Step 2: Verify Local IP and DNS Configuration
 
-```text id="2fx9vc"
-enterprise-it-support-lab/
+First thing I usually check:
 
-├── active-directory/
-│   ├── user-creation.md
-│   ├── password-reset.md
-│   ├── group-management.md
-│   ├── account-lockout.md
-│   ├── computers-management.md
-│   └── domain-join-troubleshooting.md
-│
-├── windows-server/
-│   ├── dns-troubleshooting.md
-│   ├── dhcp-management.md
-│   └── rdp-troubleshooting.md
-│
-├── citrix/
-│   └── workspace-troubleshooting.md
-│
-├── jira-ticketing/
-│   ├── incident-response-template.md
-│   └── service-request-template.md
-│
-├── printers/
-│   └── printer-troubleshooting.md
-│
-├── networking/
-│   ├── ipconfig-nslookup-ping.md
-│   └── common-powershell-commands.md
-│
-├── security-escalations/
-│   ├── suspicious-login-investigation.md
-│   └── phishing-escalation.md
-│
-├── screenshots/
-│
-└── README.md
-```
-
----
-
-# Core Help Desk Scenarios
-
-## Active Directory
-
-* New user creation
-* Password resets
-* Account unlocks
-* Group membership management
-* User provisioning and deprovisioning
-* Computer account management
-* Domain join troubleshooting
-* OU placement and device lifecycle management
-* Access request workflows
-
-## Windows Server Support
-
-* DNS troubleshooting
-* DHCP scope management
-* RDP troubleshooting
-* Domain join troubleshooting
-* User login failures
-
-## End User Support
-
-* Citrix Workspace login issues
-* VPN access troubleshooting
-* Printer mapping and printer failures
-* MFA login issues
-* Outlook and Microsoft 365 access support
-
-## Security Escalation Support
-
-* Suspicious login investigations
-* Phishing email escalation
-* Privileged account review
-* Wazuh alert triage
-* Incident documentation and escalation workflows
-
----
-
-# Example Safe Enterprise Commands
-
-## Verify DNS Configuration
-
-```powershell id="ntgblq"
+```powershell
 ipconfig /all
 ```
 
-Expected Example:
+What I’m looking for:
 
-```text id="b5v75k"
+- Correct IP assignment  
+- Default gateway  
+- Internal DNS server assignment  
+- DHCP enabled status  
+- Domain suffix  
+
+Example healthy result:
+
+```text
+IPv4 Address: 10.x.x.x
 DNS Server: 10.x.x.x
 Domain: yourdomain.local
+DHCP Enabled: Yes
 ```
+
+Things that usually stand out as problems:
+
+```text
+169.254.x.x
+Public DNS servers internally
+Missing DNS suffix
+Incorrect gateway
+```
+
+Public DNS inside an Active Directory environment causes a lot of authentication issues.
 
 ---
 
-## Verify Domain Controller Discovery
+# Step 3: Test Basic Connectivity
 
-```powershell id="lcpfcv"
+Before blaming DNS completely, I usually verify network reachability first.
+
+```powershell
+ping 10.x.x.1
+ping DC01
+ping yourdomain.local
+```
+
+What I’m checking:
+
+- Gateway reachable  
+- Domain Controller reachable  
+- Hostname resolution functioning  
+
+If pinging the IP works but hostname fails, DNS becomes the likely issue.
+
+---
+
+# Step 4: Verify DNS Resolution
+
+Next I’ll normally test name resolution directly.
+
+```powershell
+nslookup DC01
+nslookup yourdomain.local
+```
+
+For Active Directory environments, I’ll also verify SRV records:
+
+```powershell
 nslookup -type=SRV _ldap._tcp.dc._msdcs.yourdomain.local
 ```
 
-Expected Result:
+Expected result:
 
-```text id="v11zmb"
+```text
 SRV service location:
 priority = 0
 weight = 100
@@ -188,44 +118,151 @@ port = 389
 svr hostname = DC01.yourdomain.local
 ```
 
+If SRV records fail, clients usually can’t properly locate Domain Controllers.
+
 ---
 
-## Launch Active Directory Users and Computers
+# Step 5: Flush and Re-register DNS
 
-```powershell id="zobq4k"
-dsa.msc
+If the workstation has stale or incorrect records, I’ll usually refresh DNS registration.
+
+```powershell
+ipconfig /flushdns
+ipconfig /registerdns
+```
+
+On servers or Domain Controllers, I may also restart Netlogon:
+
+```powershell
+net stop netlogon
+net start netlogon
+```
+
+This republishes important AD-related DNS records.
+
+---
+
+# Step 6: Review DNS Records on the Server
+
+On the DNS server side, I’ll usually verify:
+
+- Correct A records exist  
+- No stale or duplicate entries  
+- Reverse lookup zones configured  
+- PTR records functioning  
+- Dynamic updates configured properly  
+
+Duplicate or stale records can create inconsistent authentication and connectivity issues.
+
+---
+
+# Step 7: Verify Reverse Lookup Configuration
+
+If I see something like:
+
+```text
+Server: UnKnown
+```
+
+during `nslookup`, that usually points toward missing reverse lookup or PTR records.
+
+Things I normally verify:
+
+- Reverse lookup zone exists  
+- PTR records created correctly  
+- Dynamic updates enabled  
+- Correct subnet associated with the reverse zone  
+
+Reverse lookup problems can sometimes affect authentication and logging visibility.
+
+---
+
+# Step 8: Validate Business Functionality
+
+After corrections, I’ll usually validate actual business functionality instead of just checking connectivity.
+
+Things I normally test:
+
+- User login works  
+- Domain join succeeds  
+- Shared drives resolve correctly  
+- Printers reconnect  
+- VPN access functions properly  
+- RDP connections succeed  
+- Outlook and Microsoft 365 connectivity restored  
+
+The DNS layer might be fixed, but the user still needs their workflow restored.
+
+---
+
+# Step 9: Document the Ticket
+
+For documentation, I usually include:
+
+- DNS issue identified  
+- Connectivity tested  
+- DNS records corrected  
+- Cache flushed and re-registered  
+- Reverse lookup configured if needed  
+- Validation completed  
+- Final resolution status  
+
+Good DNS documentation becomes really helpful for recurring infrastructure issues later.
+
+---
+
+# Example Ticket Note
+
+```text
+User unable to access internal resources after connecting to VPN.
+
+Verified workstation was using incorrect public DNS server instead of internal Domain Controller DNS.
+
+Updated DNS configuration, flushed local DNS cache, and re-registered DNS records.
+
+Validated successful hostname resolution, VPN connectivity, shared drive access, and domain authentication.
+
+Issue resolved successfully.
 ```
 
 ---
 
-## Verify Time Synchronization
+# Example Interview Answer
 
-```powershell id="7c0dzd"
-w32tm /query /status
+## Question
+
+“How do you troubleshoot DNS issues?”
+
+## My Answer
+
+```text
+I usually start by verifying the workstation’s IP configuration using ipconfig /all to confirm the correct DNS server assignment.
+
+Then I test connectivity and name resolution using ping and nslookup to determine whether the issue is network-related or DNS-specific.
+
+If needed, I’ll flush and re-register DNS records, verify SRV records for Active Directory environments, and review DNS server records for stale or duplicate entries.
 ```
 
 ---
 
-# Goal of This Project
+# Security Notes
 
-This repository is designed to document practical, repeatable enterprise IT support procedures that align with real-world service desk and SOC analyst responsibilities.
+A few things I try to avoid:
 
-The goal is to demonstrate hands-on capability beyond certifications by showing operational workflows, troubleshooting methodology, escalation judgment, and documentation standards used in professional IT environments.
+- Using public DNS inside internal AD environments  
+- Leaving stale Domain Controller records active  
+- Ignoring duplicate DNS entries  
+- Misconfiguring dynamic DNS updates  
 
----
-
-# Ongoing Development
-
-This repository will continue expanding with:
-
-* Step-by-step procedures
-* Real troubleshooting scenarios
-* Jira ticket examples
-* Incident response templates
-* Security escalation documentation
-* PowerShell automation examples
-* Screenshots and validation evidence
-
-This project is continuously updated to reflect enterprise IT support practices used in production environments.
+DNS directly impacts authentication, access control, and overall network reliability.
 
 ---
+
+# Related Procedures
+
+- DHCP Management  
+- Domain Join Troubleshooting  
+- Computer Account Management  
+- VPN Troubleshooting  
+- RDP Troubleshooting  
+- Active Directory Troubleshooting
