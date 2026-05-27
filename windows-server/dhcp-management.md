@@ -2,58 +2,58 @@
 
 ## Objective
 
-Provide a standardized process for managing and troubleshooting DHCP (Dynamic Host Configuration Protocol) in enterprise Windows environments.
+This is the standard process I’d typically follow when managing or troubleshooting DHCP issues in an enterprise Windows environment.
 
-This procedure supports:
+Most DHCP-related tickets usually involve:
 
-* New workstation network connectivity
-* IP address assignment failures
-* Duplicate IP troubleshooting
-* Scope exhaustion issues
-* Incorrect subnet assignments
-* Reservation management
-* Printer and device network assignments
-* Domain onboarding support
+- New workstation connectivity problems  
+- IP assignment failures  
+- Duplicate IP conflicts  
+- Scope exhaustion  
+- Incorrect subnet assignments  
+- Printer connectivity issues  
+- Reservation management  
+- Domain join failures  
 
-DHCP is critical for reliable endpoint connectivity and smooth user access.
+DHCP issues can affect way more than internet access — they often impact authentication, DNS resolution, printers, VPN access, and domain communication.
 
 ---
 
 # Step 1: Identify the Issue
 
-Common user reports include:
+Most users usually report things like:
 
-* “No internet connection”
-* “Limited connectivity”
-* “Can’t reach internal resources”
-* “Printer disappeared from network”
-* “IP address conflict detected”
-* “New workstation won’t connect”
-* “Unable to join domain”
+- “No internet connection”  
+- “Limited connectivity”  
+- “Printer disappeared”  
+- “Can’t connect to internal resources”  
+- “IP address conflict detected”  
+- “New workstation won’t connect”  
+- “Unable to join the domain”  
 
-Many of these issues originate from DHCP assignment failures.
+A lot of the time, the root cause traces back to DHCP assignment problems.
 
 ---
 
 # Step 2: Verify Client IP Configuration
 
-Run:
+First thing I usually check:
 
-```powershell id="e2h7qp"
+```powershell
 ipconfig /all
 ```
 
-Check:
+What I’m looking for:
 
-* IP address assigned
-* Subnet mask
-* Default gateway
-* DNS server assignment
-* DHCP Enabled = Yes
+- Assigned IP address  
+- Subnet mask  
+- Default gateway  
+- DNS server assignment  
+- DHCP enabled status  
 
-Example healthy result:
+Example of a healthy result:
 
-```text id="9a7vlt"
+```text
 IPv4 Address: 10.x.x.x
 Subnet Mask: 255.255.255.0
 Default Gateway: 10.x.x.1
@@ -61,173 +61,178 @@ DNS Server: 10.x.x.x
 DHCP Enabled: Yes
 ```
 
-Red flags include:
+Things that immediately stand out as problems:
 
-```text id="w4m8cb"
+```text
 169.254.x.x (APIPA)
-Duplicate IP warning
+Duplicate IP warnings
 Missing gateway
-Public DNS in internal environment
+Public DNS inside internal AD environment
 ```
 
-APIPA usually means DHCP assignment failed.
+If I see a 169.254 address, DHCP usually failed completely.
 
 ---
 
-# Step 3: Renew DHCP Lease
+# Step 3: Renew the DHCP Lease
 
-Run:
+Next I’ll usually try renewing the lease.
 
-```powershell id="g1p4xz"
+```powershell
 ipconfig /release
 ipconfig /renew
 ```
 
-This requests a fresh IP lease from the DHCP server.
+This forces the workstation to request a fresh lease from the DHCP server.
 
-If renewal fails, continue investigating server-side issues.
+If renewal still fails, then I start looking deeper into server-side or network issues.
 
 ---
 
 # Step 4: Test Network Reachability
 
-Run:
+Then I’ll test basic connectivity.
 
-```powershell id="j9f2wr"
+```powershell
 ping 10.x.x.1
 ping DC01
 ping yourdomain.local
 ```
 
-Verify:
+What I’m checking:
 
-* Gateway reachable
-* Domain Controller reachable
-* Internal DNS resolution functioning
+- Gateway reachable  
+- Domain Controller reachable  
+- Internal DNS resolving correctly  
 
-If IP works but hostname fails, DNS may also be involved.
-
----
-
-# Step 5: Review DHCP Scope (Server Side)
-
-On the DHCP server, verify:
-
-* Scope is active
-* Available IP addresses remain
-* Correct subnet configured
-* Correct exclusions applied
-* Reservations properly assigned
-* Lease duration appropriate
-
-A full scope prevents new devices from receiving addresses.
+If pinging IPs works but hostnames fail, DNS is usually involved too.
 
 ---
 
-# Step 6: Check for Duplicate IPs
+# Step 5: Review DHCP Scope on the Server
 
-Symptoms include:
+On the DHCP server side, I’ll usually verify:
 
-* Intermittent disconnects
-* Login failures
-* Printer mapping failures
-* VPN instability
+- Scope is active  
+- Available IP addresses remain  
+- Correct subnet configured  
+- Exclusions configured properly  
+- Reservations assigned correctly  
+- Lease duration looks reasonable  
 
-Verify:
-
-* No static IP conflicts
-* Reserved IPs not manually assigned elsewhere
-* Printers and servers using correct reservations
-
-Duplicate IPs can create difficult intermittent issues.
+A full DHCP scope can completely prevent new devices from connecting properly.
 
 ---
 
-# Step 7: Manage Reservations (If Needed)
+# Step 6: Check for Duplicate IP Addresses
 
-For devices requiring fixed IPs:
+Duplicate IPs can create really inconsistent issues.
 
-Examples:
+Common symptoms:
 
-* Printers
-* Servers
-* Network appliances
-* Specialized workstations
+- Random disconnects  
+- Login problems  
+- Printer failures  
+- VPN instability  
+- Intermittent connectivity issues  
 
-Create DHCP reservations using:
+Things I usually verify:
 
-* MAC address
-* Device hostname
-* Assigned fixed internal IP
+- No static IP conflicts  
+- Reserved IPs not manually assigned elsewhere  
+- Printers and servers using proper reservations  
 
-Avoid unnecessary static IP assignments when DHCP reservations are preferred.
+These are some of the more annoying issues because they can appear random at first.
 
 ---
 
-# Step 8: Validate Business Function
+# Step 7: Manage DHCP Reservations
 
-After correction, confirm:
+For devices needing consistent IP addresses, I’ll usually use DHCP reservations instead of random static assignments.
 
-* User login works
-* Domain join works
-* Printers reconnect
-* Shared drives resolve
-* VPN functions properly
-* Citrix Workspace access succeeds
+Common devices include:
 
-Always validate the business impact, not just the network layer.
+- Printers  
+- Servers  
+- Network appliances  
+- Specialized workstations  
+
+Reservations are normally configured using:
+
+- MAC address  
+- Hostname  
+- Assigned internal IP  
+
+I generally prefer reservations over manually configured static IPs whenever possible.
+
+---
+
+# Step 8: Validate Business Functionality
+
+After fixing the issue, I’ll usually validate actual business functionality, not just connectivity.
+
+Things I normally test:
+
+- User login works  
+- Domain join succeeds  
+- Printers reconnect  
+- Shared drives resolve correctly  
+- VPN access functions properly  
+- Citrix Workspace connects successfully  
+
+The network layer might be fixed, but the user still needs their actual workflow restored.
 
 ---
 
 # Step 9: Document the Ticket
 
-Record:
+For documentation, I usually include:
 
-* DHCP issue identified
-* Lease renewed or reservation corrected
-* Scope adjustments made
-* Duplicate IP resolved
-* Validation completed
-* Final resolution status
+- DHCP issue identified  
+- Lease renewed or reservation corrected  
+- Scope changes performed  
+- Duplicate IP conflict resolved  
+- Validation completed  
+- Final resolution status  
 
-Documentation improves future troubleshooting and recurring issue analysis.
+Good notes help a lot when recurring network issues come back later.
 
 ---
 
 # Example Ticket Note
 
-```text id="v5r8xm"
+```text
 New workstation unable to join domain due to DHCP assignment failure.
 
 System received APIPA address (169.254.x.x) because DHCP scope was exhausted.
 
-Expanded available scope range, renewed lease, and confirmed proper assignment of internal IP and DNS settings.
+Expanded available scope range, renewed DHCP lease, and confirmed proper assignment of internal IP address and DNS settings.
 
 Validated successful domain join to yourdomain.local and confirmed user login.
-Issue resolved and ticket closed.
+
+Issue resolved successfully.
 ```
 
 ---
 
 # Security Notes
 
-Never:
+A few things I try to avoid:
 
-* Assign random static IPs without documentation
-* Ignore duplicate IP conflicts
-* Use public DNS in internal AD environments
-* Leave DHCP scopes unmanaged
+- Assigning undocumented static IPs  
+- Ignoring duplicate IP conflicts  
+- Using public DNS in internal AD environments  
+- Leaving DHCP scopes unmanaged  
 
-DHCP directly impacts authentication, access, and endpoint security.
+DHCP directly affects authentication, endpoint communication, and overall network reliability.
 
 ---
 
 # Related Procedures
 
-* DNS Troubleshooting
-* Domain Join Troubleshooting
-* Computer Account Management
-* Printer Troubleshooting
-* RDP Troubleshooting
-
----
+- DNS Troubleshooting  
+- Domain Join Troubleshooting  
+- Computer Account Management  
+- Printer Troubleshooting  
+- VPN Troubleshooting  
+- RDP Troubleshooting
