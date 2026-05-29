@@ -296,5 +296,5 @@ error is not always the actual problem. The software installation warning
 ultimately led me to investigate the domain's time hierarchy, which 
 uncovered the real issue.
 
-Note - Documentation was sanitized for security purposes.
+Note - Lab-specific hostnames, domains, and infrastructure details have been sanitized for security and privacy purposes.
 
